@@ -32,11 +32,13 @@ struct CLI
 {
 	std::vector<std::string> filePaths;
 	std::string outPath;
-	int forceChannels = 0;
-	int rotate = 0;
-	bool oneLine = false;
-	bool bytesOnly = false;
-	bool showSymbol = false;
+	int forceChannels;
+	int rotate;
+	bool oneLine;
+	bool bytesOnly;
+	bool showSymbol;
+
+	CLI() : forceChannels(0), rotate(0), oneLine(false), bytesOnly(false), showSymbol(false) {}
 };
 
 static void PrintUsage(const char* exePath)
@@ -212,7 +214,7 @@ int main(int argc, char* argv[])
 		}
 		channels = cli.forceChannels ? cli.forceChannels : channels;
 
-		auto ImageFormatFromChannels = std::array{ImageFormat::None, ImageFormat::Lum, ImageFormat::LumA, ImageFormat::RGB, ImageFormat::RGBA};
+		auto ImageFormatFromChannels = std::array<ImageFormat, 5>{{ImageFormat::None, ImageFormat::Lum, ImageFormat::LumA, ImageFormat::RGB, ImageFormat::RGBA}};
 		ImageView image{buffer.get(), width, height, ImageFormatFromChannels.at(channels)};
 		auto barcodes = ReadBarcodes(image.rotated(cli.rotate), options);
 
