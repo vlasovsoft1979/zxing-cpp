@@ -21,7 +21,7 @@
 #include <utility>
 #include <vector>
 
-namespace ZXing::MaxiCode {
+namespace ZXing { namespace MaxiCode {
 
 static const int ALL = 0;
 static const int EVEN = 1;
@@ -329,4 +329,4 @@ DecoderResult Decode(const BitMatrix& bits)
 	return DecodedBitStreamParser::Decode(std::move(datawords), mode);
 }
 
-} // namespace ZXing::MaxiCode
+}} // namespace ZXing::MaxiCode

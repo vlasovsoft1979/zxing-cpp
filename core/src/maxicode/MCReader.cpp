@@ -14,7 +14,7 @@
 #include "MCDecoder.h"
 #include "Barcode.h"
 
-namespace ZXing::MaxiCode {
+namespace ZXing { namespace MaxiCode {
 
 /**
 * This method detects a code in a "pure" image -- that is, pure monochrome image
@@ -63,4 +63,4 @@ Barcode Reader::decode(const BinaryBitmap& image) const
 	return Barcode(std::move(decRes), DetectorResult{}, BarcodeFormat::MaxiCode);
 }
 
-} // namespace ZXing::MaxiCode
+}} // namespace ZXing::MaxiCode

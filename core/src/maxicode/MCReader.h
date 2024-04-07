@@ -8,14 +8,12 @@
 
 #include "Reader.h"
 
-namespace ZXing::MaxiCode {
+namespace ZXing { namespace MaxiCode {
 
 class Reader : public ZXing::Reader
 {
 public:
-	using ZXing::Reader::Reader;
-
-	Barcode decode(const BinaryBitmap& image) const override;
+	Barcode decode(const BinaryBitmap& image) const;
 };
 
-} // namespace ZXing::MaxiCode
+}} // namespace ZXing::MaxiCode
