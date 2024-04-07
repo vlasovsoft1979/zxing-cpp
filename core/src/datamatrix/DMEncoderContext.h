@@ -14,24 +14,37 @@
 #include <string>
 #include <utility>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 class EncoderContext
 {
 	std::string _msg;
-	SymbolShape _shape = SymbolShape::NONE;
-	int _minWidth = -1;
-	int _minHeight = -1;
-	int _maxWidth = -1;
-	int _maxHeight = -1;
+	SymbolShape _shape;
+	int _minWidth;
+	int _minHeight;
+	int _maxWidth;
+	int _maxHeight;
 	ByteArray _codewords;
-	int _pos = 0;
-	int _newEncoding = -1;
-	const SymbolInfo* _symbolInfo = nullptr;
-	int _skipAtEnd = 0;
+	int _pos;
+	int _newEncoding;
+	const SymbolInfo* _symbolInfo;
+	int _skipAtEnd;
 
 public:
-	explicit EncoderContext(std::string&& msg) : _msg(std::move(msg)) { _codewords.reserve(_msg.length()); }
+	explicit EncoderContext(std::string&& msg) 
+		: _msg(std::move(msg))
+		, _shape(SymbolShape::NONE)
+		, _minWidth(-1)
+		, _minHeight(-1)
+		, _maxWidth(-1)
+		, _maxHeight(-1)
+		, _pos(0)
+		, _newEncoding(-1)
+		, _symbolInfo(nullptr)
+		, _skipAtEnd(0)
+	{ 
+		_codewords.reserve(_msg.length()); 
+	}
 	
 	EncoderContext(const EncoderContext &) = delete;	// avoid copy by mistake
 
@@ -125,4 +138,4 @@ public:
 	}
 };
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

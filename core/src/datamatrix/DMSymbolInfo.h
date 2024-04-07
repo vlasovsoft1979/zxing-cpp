@@ -8,7 +8,7 @@
 
 #include "DMSymbolShape.h"
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 class SymbolInfo
 {
@@ -23,7 +23,14 @@ class SymbolInfo
 
 public:
 	constexpr SymbolInfo(bool rectangular, int dataCapacity, int errorCodewords, int matrixWidth, int matrixHeight, int dataRegions)
-		: SymbolInfo(rectangular, dataCapacity, errorCodewords, matrixWidth, matrixHeight, dataRegions, dataCapacity, errorCodewords)
+		: _rectangular(rectangular),
+		  _dataCapacity(dataCapacity),
+		  _errorCodewords(errorCodewords),
+		  _matrixWidth(matrixWidth),
+		  _matrixHeight(matrixHeight),
+		  _dataRegions(dataRegions),
+		  _rsBlockData(dataCapacity),
+		  _rsBlockError(errorCodewords)
 	{}
 
 	constexpr SymbolInfo(bool rectangular, int dataCapacity, int errorCodewords, int matrixWidth, int matrixHeight, int dataRegions,
@@ -75,4 +82,4 @@ public:
 	int errorLengthForInterleavedBlock() const { return _rsBlockError; }
 };
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

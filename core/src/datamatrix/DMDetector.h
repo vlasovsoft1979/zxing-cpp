@@ -19,9 +19,9 @@ class DetectorResult;
 namespace DataMatrix {
 
 #ifdef __cpp_impl_coroutine
-using DetectorResults = Generator<DetectorResult>;
+typedef Generator<DetectorResult> DetectorResults;
 #else
-using DetectorResults = DetectorResult;
+typedef DetectorResult DetectorResults;
 #endif
 
 DetectorResults Detect(const BitMatrix& image, bool tryHarder, bool tryRotate, bool isPure);

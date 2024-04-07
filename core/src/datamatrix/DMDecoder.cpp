@@ -19,12 +19,12 @@
 
 #include <algorithm>
 #include <array>
-#include <optional>
+#include "tools/optional.hpp"
 #include <string>
-#include <utility>
+#include "tools/utility.hpp"
 #include <vector>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 /**
 * <p>Data Matrix Codes can encode text as bits in one of several modes, and can use multiple modes
@@ -72,8 +72,9 @@ static const char TEXT_SHIFT3_SET_CHARS[] = {
 
 struct Shift128
 {
-	bool set = false;
+	bool set;
 	char operator()(int val) { return static_cast<char>(val + std::exchange(set, false) * 128); }
+	Shift128() : set(false) {}
 };
 
 /**
@@ -131,7 +132,7 @@ std::optional<std::array<int, 3>> DecodeNextTriple(BitSource& bits)
 	int b = fullBitValue / 40;
 	int c = fullBitValue - b * 40;
 
-	return {{a, b, c}};
+	return std::array<int, 3>{{a, b, c}};
 }
 
 enum class Mode {C40, TEXT};
@@ -404,13 +405,13 @@ retry:
 		return FormatError("Invalid number of data blocks");
 
 	// Count total number of data bytes
-	ByteArray resultBytes(TransformReduce(dataBlocks, 0, [](const auto& db) { return db.numDataCodewords; }));
+	ByteArray resultBytes(TransformReduce(dataBlocks, 0, [](const DataBlock& db) { return db.numDataCodewords; }));
 
 	// Error-correct and copy data blocks together into a stream of bytes
 	const int dataBlocksCount = Size(dataBlocks);
 	for (int j = 0; j < dataBlocksCount; j++) {
-		auto& [numDataCodewords, codewords] = dataBlocks[j];
-		if (!CorrectErrors(codewords, numDataCodewords)) {
+		auto& db = dataBlocks[j];
+		if (!CorrectErrors(codewords, db.numDataCodewords)) {
 			if(version->versionNumber == 24 && !fix259) {
 				fix259 = true;
 				goto retry;
@@ -418,7 +419,7 @@ retry:
 			return ChecksumError();
 		}
 
-		for (int i = 0; i < numDataCodewords; i++) {
+		for (int i = 0; i < db.numDataCodewords; i++) {
 			// De-interlace data blocks.
 			resultBytes[i * dataBlocksCount + j] = codewords[i];
 		}
@@ -451,7 +452,8 @@ DecoderResult Decode(const BitMatrix& bits)
 	//TODO:
 	// * unify bit mirroring helper code with QRReader?
 	// * rectangular symbols with the a size of 8 x Y are not supported a.t.m.
-	if (auto mirroredRes = DoDecode(FlippedL(bits)); mirroredRes.isValid()) {
+	auto mirroredRes = DoDecode(FlippedL(bits));
+	if (mirroredRes.isValid()) {
 		mirroredRes.setIsMirrored(true);
 		return mirroredRes;
 	}
@@ -459,4 +461,4 @@ DecoderResult Decode(const BitMatrix& bits)
 	return res;
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

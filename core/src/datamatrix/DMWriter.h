@@ -54,7 +54,7 @@ public:
 
 private:
 	SymbolShape _shapeHint;
-	int _quietZone = 1, _minWidth = -1, _minHeight = -1, _maxWidth = -1, _maxHeight = -1;
+	int _quietZone, _minWidth, _minHeight, _maxWidth, _maxHeight;
 	CharacterSet _encoding;
 };
 

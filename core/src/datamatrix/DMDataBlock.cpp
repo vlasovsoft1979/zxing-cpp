@@ -12,7 +12,7 @@
 
 #include <vector>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 std::vector<DataBlock> GetDataBlocks(const ByteArray& rawCodewords, const Version& version, bool fix259)
 {
@@ -24,7 +24,7 @@ std::vector<DataBlock> GetDataBlocks(const ByteArray& rawCodewords, const Versio
 	result.reserve(numResultBlocks);
 	for (auto& ecBlock : ecBlocks.blocks)
 		for (int i = 0; i < ecBlock.count; i++)
-			result.push_back({ecBlock.dataCodewords, ByteArray(ecBlocks.codewordsPerBlock + ecBlock.dataCodewords)});
+			result.push_back(DataBlock{ecBlock.dataCodewords, ByteArray(ecBlocks.codewordsPerBlock + ecBlock.dataCodewords)});
 
 	// All blocks have the same amount of data, except that the last n
 	// (where n may be 0) have 1 less byte. Figure out where these start.
@@ -60,4 +60,4 @@ std::vector<DataBlock> GetDataBlocks(const ByteArray& rawCodewords, const Versio
 	return result;
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

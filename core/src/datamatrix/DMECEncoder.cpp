@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 /**
 * Precomputed polynomial factors for ECC 200.
@@ -134,4 +134,4 @@ void EncodeECC200(ByteArray& codewords, const SymbolInfo& symbolInfo)
 	}
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

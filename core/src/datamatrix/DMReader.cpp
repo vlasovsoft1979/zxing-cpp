@@ -16,7 +16,7 @@
 
 #include <utility>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 Barcode Reader::decode(const BinaryBitmap& image) const
 {
@@ -55,4 +55,4 @@ Barcodes Reader::decode(const BinaryBitmap& image, int maxSymbols) const
 	return res;
 }
 #endif
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

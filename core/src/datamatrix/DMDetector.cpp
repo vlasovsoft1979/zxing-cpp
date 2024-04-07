@@ -25,7 +25,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <map>
-#include <utility>
+#include "tools/utility.hpp"
 #include <vector>
 
 #ifndef PRINT_DEBUG
@@ -38,7 +38,7 @@ for (auto v : vec) \
 printf("\n");
 #endif
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 /**
 * The following code is the 'old' code by Sean Owen based on the Java upstream project.
@@ -198,7 +198,7 @@ static DetectorResult SampleGrid(const BitMatrix& image, const ResultPoint& topL
 								 const ResultPoint& bottomRight, const ResultPoint& topRight, int width, int height)
 {
 	return SampleGrid(image, width, height,
-					  {Rectangle(width, height, 0.5), {topLeft, topRight, bottomRight, bottomLeft}});
+					  PerspectiveTransform{Rectangle(width, height, 0.5), {topLeft, topRight, bottomRight, bottomLeft}});
 }
 
 /**
@@ -262,14 +262,14 @@ static DetectorResult DetectOld(const BitMatrix& image)
 	// Point A and D are across the diagonal from one another,
 	// as are B and C. Figure out which are the solid black lines
 	// by counting transitions
-	std::array transitions = {
+	std::array<ResultPointsAndTransitions, 4> transitions = {{
 		TransitionsBetween(image, pointA, pointB),
 		TransitionsBetween(image, pointA, pointC),
 		TransitionsBetween(image, pointB, pointD),
 		TransitionsBetween(image, pointC, pointD),
-	};
+	}};
 	std::sort(transitions.begin(), transitions.end(),
-			  [](const auto& a, const auto& b) { return a.transitions < b.transitions; });
+			  [](const ResultPointsAndTransitions& a, const ResultPointsAndTransitions& b) { return a.transitions < b.transitions; });
 
 	// Sort by number of transitions. First two will be the two solid sides; last two
 	// will be the two alternating black/white sides
@@ -291,7 +291,9 @@ static DetectorResult DetectOld(const BitMatrix& image)
 	const ResultPoint* bottomRight = nullptr;
 	const ResultPoint* bottomLeft = nullptr;
 	const ResultPoint* topLeft = nullptr;
-	for (const auto& [point, count] : pointCount) {
+	for (const auto& pc : pointCount) {
+		const auto& point = pc.first;
+		const auto& count = pc.second;
 		if (count == 2) {
 			bottomLeft = point; // this is definitely the bottom left, then -- end of two L sides
 		}
@@ -461,7 +463,9 @@ public:
 		modSizes.push_back(sumFront + distance(end, project(_points.back())));
 		modSizes.front() = 0; // the first element is an invalid sumBack value, would be pop_front() if vector supported this
 		auto lineLength = distance(beg, end) - unitPixelDist;
-		auto [iMin, iMax] = std::minmax_element(modSizes.begin() + 1, modSizes.end());
+		auto mm = std::minmax_element(modSizes.begin() + 1, modSizes.end());
+		auto& iMin = mm.first;
+		auto& iMax = mm.second;
 		auto meanModSize = average(modSizes, [](double dist){ return dist > 0; });
 
 		printf("unit pixel dist: %.1f\n", unitPixelDist);
@@ -565,10 +569,16 @@ class EdgeTracer : public BitMatrixCursorF
 	}
 
 public:
-	ByteMatrix* history = nullptr;
-	int state = 0;
+	EdgeTracer(const BitMatrix& image, PointF p, PointF d)
+		: BitMatrixCursorF(image, p, d)
+		, history(nullptr)
+		, state(0)
+	{}
 
-	using BitMatrixCursorF::BitMatrixCursor;
+	ByteMatrix* history;
+	int state;
+
+	//using BitMatrixCursorF::BitMatrixCursor;
 
 	bool updateDirectionFromOrigin(PointF origin)
 	{
@@ -610,7 +620,7 @@ public:
 		} while (true);
 	}
 
-	bool traceGaps(PointF dEdge, RegressionLine& line, int maxStepSize, const RegressionLine& finishLine = {}, double minDist = 0)
+	bool traceGaps(PointF dEdge, RegressionLine& line, int maxStepSize, const RegressionLine& finishLine = RegressionLine{}, double minDist = 0)
 	{
 		line.setDirectionInward(dEdge);
 		int gaps = 0, steps = 0, maxStepsPerGap = maxStepSize;
@@ -723,7 +733,7 @@ static DetectorResult Scan(EdgeTracer& startTracer, std::array<DMRegressionLine,
 		log(startTracer.p);
 
 		PointF tl, bl, br, tr;
-		auto& [lineL, lineB, lineR, lineT] = lines;
+		auto& lineL = lines[0], lineB = lines[1], lineR = lines[2], lineT = lines[3];
 
 		for (auto& l : lines)
 			l.reset();
@@ -834,7 +844,7 @@ static DetectorResult Scan(EdgeTracer& startTracer, std::array<DMRegressionLine,
 
 		CHECK(dimT >= 10 && dimT <= 144 && dimR >= 8 && dimR <= 144);
 
-		auto movedTowardsBy = [](PointF a, PointF b1, PointF b2, auto d) {
+		auto movedTowardsBy = [](PointF a, PointF b1, PointF b2, double d) {
 			return a + d * normalized(normalized(b1 - a) + normalized(b2 - a));
 		};
 
@@ -880,7 +890,7 @@ static DetectorResults DetectNew(const BitMatrix& image, bool tryHarder, bool tr
 
 	constexpr int minSymbolSize = 8 * 2; // minimum realistic size in pixel: 8 modules x 2 pixels per module
 
-	for (auto dir : {PointF{-1, 0}, {1, 0}, {0, -1}, {0, 1}}) {
+	for (auto dir : std::array<PointF, 4>{{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}}) {
 		auto center = PointI(image.width() / 2, image.height() / 2);
 		auto startPos = centered(center - center * dir + minSymbolSize / 2 * dir);
 
@@ -900,7 +910,8 @@ static DetectorResults DetectNew(const BitMatrix& image, bool tryHarder, bool tr
 			while (res = Scan(tracer, lines), res.isValid())
 				co_yield std::move(res);
 #else
-			if (auto res = Scan(tracer, lines); res.isValid())
+			auto res = Scan(tracer, lines);
+			if (res.isValid())
 				return res;
 #endif
 
@@ -985,4 +996,4 @@ DetectorResults Detect(const BitMatrix& image, bool tryHarder, bool tryRotate, b
 #endif
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

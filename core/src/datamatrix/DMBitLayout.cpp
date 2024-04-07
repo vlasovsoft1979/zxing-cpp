@@ -15,14 +15,14 @@
 #include <array>
 #include <cstddef>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 struct BitPos
 {
 	int row, col;
 };
 
-using BitPosArray = std::array<BitPos, 8>;
+typedef std::array<BitPos, 8> BitPosArray;
 
 /**
  * VisitMatrix gets a functor/callback that is responsible for processing/visiting the bits in the matrix.
@@ -191,4 +191,4 @@ ByteArray CodewordsFromBitMatrix(const BitMatrix& bits, const Version& version)
 	return result;
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 static const uint8_t PAD = 129;
 static const uint8_t UPPER_SHIFT = 235;
@@ -138,10 +138,10 @@ static int LookAheadTest(const std::string& msg, size_t startpos, int currentMod
 	std::array<float, 6> charCounts;
 	//step J
 	if (currentMode == ASCII_ENCODATION) {
-		charCounts = { 0, 1, 1, 1, 1, 1.25f };
+		charCounts = {{ 0, 1, 1, 1, 1, 1.25f }};
 	}
 	else {
-		charCounts = { 1, 2, 2, 2, 2, 2.25f };
+		charCounts = {{ 1, 2, 2, 2, 2, 2.25f }};
 		charCounts[currentMode] = 0;
 	}
 
@@ -883,9 +883,9 @@ ByteArray Encode(const std::wstring& msg, CharacterSet charset, SymbolShape shap
 	context.setSymbolShape(shape);
 	context.setSizeConstraints(minWidth, minHeight, maxWidth, maxHeight);
 
-	constexpr std::wstring_view MACRO_05_HEADER = L"[)>\x1E""05\x1D";
-	constexpr std::wstring_view MACRO_06_HEADER = L"[)>\x1E""06\x1D";
-	constexpr std::wstring_view MACRO_TRAILER = L"\x1E\x04";
+	const std::wstring_view MACRO_05_HEADER = L"[)>\x1E""05\x1D";
+	const std::wstring_view MACRO_06_HEADER = L"[)>\x1E""06\x1D";
+	const std::wstring_view MACRO_TRAILER = L"\x1E\x04";
 
 	if (StartsWith(msg, MACRO_05_HEADER) && EndsWith(msg, MACRO_TRAILER)) {
 		context.addCodeword(MACRO_05);
@@ -932,4 +932,4 @@ ByteArray Encode(const std::wstring& msg, CharacterSet charset, SymbolShape shap
 	return context.codewords();
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

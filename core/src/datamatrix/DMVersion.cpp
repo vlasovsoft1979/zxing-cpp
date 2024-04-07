@@ -6,7 +6,7 @@
 
 #include "DMVersion.h"
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 const Version* VersionForDimensions(int height, int width)
 {
@@ -79,4 +79,4 @@ const Version* VersionForDimensions(int height, int width)
 	return nullptr;
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

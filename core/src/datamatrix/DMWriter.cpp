@@ -19,7 +19,7 @@
 #include <string>
 #include <utility>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 /**
 * Encode the given symbol info to a bit matrix.
@@ -77,6 +77,11 @@ static BitMatrix EncodeLowLevel(const BitMatrix& placement, const SymbolInfo& sy
 
 Writer::Writer() :
 	_shapeHint(SymbolShape::NONE),
+	_quietZone(1),
+	_minWidth(-1),
+	_minHeight(-1),
+	_maxWidth(-1),
+	_maxHeight(-1),
 	_encoding(CharacterSet::Unknown)
 {
 }
@@ -117,4 +122,4 @@ BitMatrix Writer::encode(const std::string& contents, int width, int height) con
 	return encode(FromUtf8(contents), width, height);
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

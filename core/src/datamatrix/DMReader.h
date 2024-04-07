@@ -8,17 +8,15 @@
 
 #include "Reader.h"
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 class Reader : public ZXing::Reader
 {
 public:
-	using ZXing::Reader::Reader;
-
-	Barcode decode(const BinaryBitmap& image) const override;
+	Barcode decode(const BinaryBitmap& image) const;
 #ifdef __cpp_impl_coroutine
 	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const override;
 #endif
 };
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

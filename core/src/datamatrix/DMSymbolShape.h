@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 enum class SymbolShape {
 	NONE,
@@ -14,4 +14,4 @@ enum class SymbolShape {
 	RECTANGLE,
 };
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

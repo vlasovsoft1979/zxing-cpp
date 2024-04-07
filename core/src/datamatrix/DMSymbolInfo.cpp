@@ -12,9 +12,9 @@
 #include <cstddef>
 #include <stdexcept>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
-static constexpr const SymbolInfo PROD_SYMBOLS[] = {
+static constexpr SymbolInfo PROD_SYMBOLS[] = {
 	{ false, 3, 5, 8, 8, 1 },
 	{ false, 5, 7, 10, 10, 1 },
 	{ true, 5, 7, 16, 6, 1 },
@@ -138,4 +138,4 @@ SymbolInfo::verticalDataRegions() const {
 	}
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

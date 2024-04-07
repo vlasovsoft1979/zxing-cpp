@@ -10,7 +10,7 @@
 
 #include <vector>
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 class Version;
 
@@ -21,8 +21,13 @@ class Version;
 */
 struct DataBlock
 {
-	const int numDataCodewords = 0;
+	int numDataCodewords;
 	ByteArray codewords;
+	DataBlock() : numDataCodewords(0) {}
+	DataBlock(int numDataCodewords, const ByteArray& codewords)
+		: numDataCodewords(numDataCodewords)
+		, codewords(codewords)
+	{}
 };
 
 /**
@@ -38,4 +43,4 @@ struct DataBlock
  */
 std::vector<DataBlock> GetDataBlocks(const ByteArray& rawCodewords, const Version& version, bool fix259 = false);
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix

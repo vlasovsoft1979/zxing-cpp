@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace ZXing::DataMatrix {
+namespace ZXing { namespace DataMatrix {
 
 /**
  * The Version object encapsulates attributes about a particular Data Matrix Symbol size.
@@ -71,4 +71,4 @@ const Version* VersionForDimensionsOf(const MAT& mat)
 	return VersionForDimensions(mat.height(), mat.width());
 }
 
-} // namespace ZXing::DataMatrix
+}} // namespace ZXing::DataMatrix
