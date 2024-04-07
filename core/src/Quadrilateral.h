@@ -17,13 +17,16 @@ namespace ZXing {
 template <typename T>
 class Quadrilateral : public std::array<T, 4>
 {
-	using Base = std::array<T, 4>;
+	typedef std::array<T, 4> Base;
 	using Base::at;
 public:
-	using Point = T;
+	typedef T Point;
 
 	Quadrilateral() = default;
-	Quadrilateral(T tl, T tr, T br, T bl) : Base{tl, tr, br, bl} {}
+	Quadrilateral(T tl, T tr, T br, T bl)
+    {
+        static_cast<Base&>(*this) = {{tl, tr, br, bl}};
+    }
 	template <typename U>
 	Quadrilateral(PointT<U> tl, PointT<U> tr, PointT<U> br, PointT<U> bl)
 		: Quadrilateral(Point(tl), Point(tr), Point(br), Point(bl))
@@ -44,8 +47,8 @@ public:
 	}
 };
 
-using QuadrilateralF = Quadrilateral<PointF>;
-using QuadrilateralI = Quadrilateral<PointI>;
+typedef Quadrilateral<PointF> QuadrilateralF;
+typedef Quadrilateral<PointI> QuadrilateralI;
 
 template <typename PointT = PointF>
 Quadrilateral<PointT> Rectangle(int width, int height, typename PointT::value_t margin = 0)
@@ -57,7 +60,7 @@ Quadrilateral<PointT> Rectangle(int width, int height, typename PointT::value_t 
 template <typename PointT = PointF>
 Quadrilateral<PointT> CenteredSquare(int size)
 {
-	return Scale(Quadrilateral(PointT{-1, -1}, {1, -1}, {1, 1}, {-1, 1}), size / 2);
+	return Scale(Quadrilateral<PointT>({-1, -1}, {1, -1}, {1, 1}, {-1, 1}), size / 2);
 }
 
 template <typename PointT = PointI>
@@ -135,9 +138,9 @@ bool IsInside(const PointT& p, const Quadrilateral<PointT>& q)
 template <typename PointT>
 Quadrilateral<PointT> BoundingBox(const Quadrilateral<PointT>& q)
 {
-	auto [minX, maxX] = std::minmax({q[0].x, q[1].x, q[2].x, q[3].x});
-	auto [minY, maxY] = std::minmax({q[0].y, q[1].y, q[2].y, q[3].y});
-	return {PointT{minX, minY}, {maxX, minY}, {maxX, maxY}, {minX, maxY}};
+	auto x = std::minmax({q[0].x, q[1].x, q[2].x, q[3].x});
+	auto y = std::minmax({q[0].y, q[1].y, q[2].y, q[3].y});
+	return {PointT{x.first, x.first}, {x.second, y.second}, {x.second, y.second}, {x.first, y.second}};
 }
 
 template <typename PointT>
@@ -153,7 +156,7 @@ bool HaveIntersectingBoundingBoxes(const Quadrilateral<PointT>& a, const Quadril
 template <typename PointT>
 Quadrilateral<PointT> Blend(const Quadrilateral<PointT>& a, const Quadrilateral<PointT>& b)
 {
-	auto dist2First = [c = a[0]](auto a, auto b) { return distance(a, c) < distance(b, c); };
+	auto dist2First = [c = a[0]](PointT a, PointT b) { return distance(a, c) < distance(b, c); };
 	// rotate points such that the the two topLeft points are closest to each other
 	auto offset = std::min_element(b.begin(), b.end(), dist2First) - b.begin();
 

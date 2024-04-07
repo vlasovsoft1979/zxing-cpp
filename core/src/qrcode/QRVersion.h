@@ -23,14 +23,14 @@ class BitMatrix;
 namespace QRCode {
 
 // clang-format off
-constexpr std::array<PointI, 32> RMQR_SIZES {
+const std::array<PointI, 32> RMQR_SIZES {{
 			PointI{43,  7}, {59,  7}, {77,  7}, {99,  7}, {139,  7},
 				  {43,  9}, {59,  9}, {77,  9}, {99,  9}, {139,  9},
 		{27, 11}, {43, 11}, {59, 11}, {77, 11}, {99, 11}, {139, 11},
 		{27, 13}, {43, 13}, {59, 13}, {77, 13}, {99, 13}, {139, 13},
 				  {43, 15}, {59, 15}, {77, 15}, {99, 15}, {139, 15},
 				  {43, 17}, {59, 17}, {77, 17}, {99, 17}, {139, 17},
-};
+}};
 // clang-format on
 
 /**
@@ -57,7 +57,7 @@ public:
 
 	BitMatrix buildFunctionPattern() const;
 
-	static constexpr PointI SymbolSize(int version, Type type)
+	static PointI SymbolSize(int version, Type type)
 	{
 		auto square = [](int s) { return PointI(s, s); };
 		auto valid = [](int v, int max) { return v >= 1 && v <= max; };
@@ -72,7 +72,7 @@ public:
 		return {}; // silence warning
 	}
 
-	static constexpr bool IsValidSize(PointI size, Type type)
+	static bool IsValidSize(PointI size, Type type)
 	{
 		switch (type) {
 		case Type::Model1: return size.x == size.y && size.x >= 21 && size.x <= 145 && (size.x % 4 == 1);
@@ -92,7 +92,7 @@ public:
 			   || HasValidSize(matrix, Type::rMQR);
 	}
 
-	static constexpr int Number(PointI size)
+	static int Number(PointI size)
 	{
 		if (size.x != size.y)
 			return IndexOf(RMQR_SIZES, size) + 1;

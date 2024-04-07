@@ -49,8 +49,8 @@ static BarcodeFormatName NAMES[] = {
 
 std::string ToString(BarcodeFormat format)
 {
-	auto i = FindIf(NAMES, [format](auto& v) { return v.format == format; });
-	return i == std::end(NAMES) ? std::string() : std::string(i->name);
+	auto i = FindIf(NAMES, [format](const BarcodeFormatName& v) { return v.format == format; });
+	return i == std::end(NAMES) ? std::string() : std::string(i->name.data(), i->name.size());
 }
 
 std::string ToString(BarcodeFormats formats)
@@ -65,7 +65,7 @@ std::string ToString(BarcodeFormats formats)
 
 static std::string NormalizeFormatString(std::string_view sv)
 {
-	std::string str(sv);
+	std::string str(sv.data(), sv.size());
 	std::transform(str.begin(), str.end(), str.begin(), [](char c) { return (char)std::tolower(c); });
 	str.erase(std::remove_if(str.begin(), str.end(), [](char c) { return Contains("_-[]", c); }), str.end());
 	return str;
@@ -73,7 +73,7 @@ static std::string NormalizeFormatString(std::string_view sv)
 
 static BarcodeFormat ParseFormatString(const std::string& str)
 {
-	auto i = FindIf(NAMES, [str](auto& v) { return NormalizeFormatString(v.name) == str; });
+	auto i = FindIf(NAMES, [str](const BarcodeFormatName& v) { return NormalizeFormatString(v.name) == str; });
 	return i == std::end(NAMES) ? BarcodeFormat::None : i->format;
 }
 

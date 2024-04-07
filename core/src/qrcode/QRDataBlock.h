@@ -10,7 +10,7 @@
 
 #include <vector>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 class Version;
 enum class ErrorCorrectionLevel;
@@ -25,6 +25,8 @@ enum class ErrorCorrectionLevel;
 class DataBlock
 {
 public:
+    DataBlock() : _numDataCodewords(0) {}
+
 	int numDataCodewords() const { return _numDataCodewords; }
 
 	const ByteArray& codewords() const { return _codewords; }
@@ -45,8 +47,8 @@ public:
 	static std::vector<DataBlock> GetDataBlocks(const ByteArray& rawCodewords, const Version& version, ErrorCorrectionLevel ecLevel);
 
 private:
-	int _numDataCodewords = 0;
+	int _numDataCodewords;
 	ByteArray _codewords;
 };
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

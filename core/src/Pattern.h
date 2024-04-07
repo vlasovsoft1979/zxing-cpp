@@ -19,22 +19,21 @@
 
 namespace ZXing {
 
-using PatternType = uint16_t;
-template<int N> using Pattern = std::array<PatternType, N>;
-using PatternRow = std::vector<PatternType>;
+typedef uint16_t PatternType;
+typedef std::vector<PatternType> PatternRow;
 
 class PatternView
 {
-	using Iterator = PatternRow::const_pointer;
-	Iterator _data = nullptr;
-	int _size = 0;
-	Iterator _base = nullptr;
-	Iterator _end = nullptr;
+	typedef PatternRow::const_pointer Iterator;
+	Iterator _data;
+	int _size;
+	Iterator _base;
+	Iterator _end;
 
 public:
-	using value_type = PatternRow::value_type;
+	typedef PatternRow::value_type value_type;
 
-	PatternView() = default;
+	PatternView(): _data(nullptr),  _size(0), _base(nullptr), _end(nullptr) {}
 
 	// A PatternRow always starts with the width of whitespace in front of the first black bar.
 	// The first element of the PatternView is the first bar.
@@ -45,7 +44,7 @@ public:
 	PatternView(Iterator data, int size, Iterator base, Iterator end) : _data(data), _size(size), _base(base), _end(end) {}
 
 	template <size_t N>
-	PatternView(const Pattern<N>& row) : _data(row.data()), _size(N)
+	PatternView(const std::array<PatternType, N>& row) : _data(row.data()), _size(N)
 	{}
 
 	Iterator data() const { return _data; }
@@ -128,18 +127,20 @@ public:
 template <typename T>
 struct BarAndSpace
 {
-	using value_type = T;
-	T bar = {}, space = {};
+	typedef T value_type;
+	T bar, space;
+    BarAndSpace() : bar{}, space{} {}
+	BarAndSpace(T bar, T space) : bar(bar), space(space) {}
 	// even index -> bar, odd index -> space
-	constexpr T& operator[](int i) noexcept { return reinterpret_cast<T*>(this)[i & 1]; }
-	constexpr T operator[](int i) const noexcept { return reinterpret_cast<const T*>(this)[i & 1]; }
+	T& operator[](int i) noexcept { return reinterpret_cast<T*>(this)[i & 1]; }
+	T operator[](int i) const noexcept { return reinterpret_cast<const T*>(this)[i & 1]; }
 	bool isValid() const { return bar != T{} && space != T{}; }
 };
 
-using BarAndSpaceI = BarAndSpace<PatternType>;
+typedef BarAndSpace<PatternType> BarAndSpaceI;
 
 template <int LEN, typename RT, typename T>
-constexpr auto BarAndSpaceSum(const T* view) noexcept
+BarAndSpace<RT> BarAndSpaceSum(const T* view) noexcept
 {
 	BarAndSpace<RT> res;
 	for (int i = 0; i < LEN; ++i)
@@ -157,7 +158,7 @@ constexpr auto BarAndSpaceSum(const T* view) noexcept
 template <int N, int SUM, bool IS_SPARCE = false>
 struct FixedPattern
 {
-	using value_type = PatternRow::value_type;
+	typedef PatternRow::value_type value_type;
 	value_type _data[N];
 	constexpr value_type operator[](int i) const noexcept { return _data[i]; }
 	constexpr const value_type* data() const noexcept { return _data; }
@@ -165,20 +166,17 @@ struct FixedPattern
 	constexpr BarAndSpace<value_type> sums() const noexcept { return BarAndSpaceSum<N, value_type>(_data); }
 };
 
-template <int N, int SUM>
-using FixedSparcePattern = FixedPattern<N, SUM, true>;
-
 template <bool E2E = false, int LEN, int SUM>
 double IsPattern(const PatternView& view, const FixedPattern<LEN, SUM, false>& pattern, int spaceInPixel = 0,
 				double minQuietZone = 0, double moduleSizeRef = 0)
 {
-	if constexpr (E2E) {
+	if (E2E) {
 		auto widths = BarAndSpaceSum<LEN, double>(view.data());
 		auto sums = pattern.sums();
 		BarAndSpace<double> modSize = {widths[0] / sums[0], widths[1] / sums[1]};
 
-		auto [m, M] = std::minmax(modSize[0], modSize[1]);
-		if (M > 4 * m) // make sure module sizes of bars and spaces are not too far away from each other
+		auto mm = std::minmax(modSize[0], modSize[1]);
+		if (mm.second > 4 * mm.first) // make sure module sizes of bars and spaces are not too far away from each other
 			return 0;
 
 		if (minQuietZone && spaceInPixel < minQuietZone * modSize.space)
@@ -374,6 +372,7 @@ void GetPatternRow(Range<I> b_row, PatternRow& p_row)
 
 	// The following code as been observed to cause a speedup of up to 30% on large images on an AVX cpu
 	// and on an a Google Pixel 3 Android phone. Your mileage may vary.
+#if __cplusplus >= 201703L
 	if constexpr (std::is_pointer_v<I> && sizeof(I) == 8 && sizeof(std::remove_pointer_t<I>) == 1) {
 		using simd_t = uint64_t;
 		while (bitPos < bitPosEnd - sizeof(simd_t)) {
@@ -394,6 +393,7 @@ void GetPatternRow(Range<I> b_row, PatternRow& p_row)
 			}
 		}
 	}
+#endif
 
 	while (++bitPos != bitPosEnd) {
 		++(*intPos);

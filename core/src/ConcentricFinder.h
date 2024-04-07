@@ -10,7 +10,7 @@
 #include "Quadrilateral.h"
 #include "ZXAlgorithms.h"
 
-#include <optional>
+#include <tools/optional.hpp>
 
 namespace ZXing {
 
@@ -33,15 +33,14 @@ static float CenterFromEnd(const std::array<T, N>& pattern, float end)
 }
 
 template<int N, typename Cursor>
-std::optional<Pattern<N>> ReadSymmetricPattern(Cursor& cur, int range)
+std::optional<std::array<PatternType, N>> ReadSymmetricPattern(Cursor& cur, int range)
 {
-	static_assert(N % 2 == 1);
 	assert(range > 0);
-	Pattern<N> res = {};
-	auto constexpr s_2 = Size(res)/2;
+	std::array<PatternType, N> res = {};
+	auto const s_2 = Size(res)/2;
 	auto cuo = cur.turnedBack();
 
-	auto next = [&](auto& cur, int i) {
+	auto next = [&](Cursor& cur, int i) {
 		auto v = cur.stepToEdge(1, range);
 		res[s_2 + i] += v;
 		if (range)
@@ -58,7 +57,7 @@ std::optional<Pattern<N>> ReadSymmetricPattern(Cursor& cur, int range)
 	return res;
 }
 
-template<bool RELAXED_THRESHOLD = false, typename PATTERN>
+template<bool RELAXED_THRESHOLD, typename PATTERN>
 int CheckSymmetricPattern(BitMatrixCursorI& cur, PATTERN pattern, int range, bool updatePosition)
 {
 	FastEdgeToEdgeCounter curFwd(cur), curBwd(cur.turnedBack());
@@ -71,12 +70,12 @@ int CheckSymmetricPattern(BitMatrixCursorI& cur, PATTERN pattern, int range, boo
 		return 0;
 
 	assert(range > 0);
-	Pattern<pattern.size()> res = {};
-	auto constexpr s_2 = Size(res)/2;
+	std::array<PatternType, pattern.size()> res = {};
+	auto const s_2 = Size(res)/2;
 	res[s_2] = centerFwd + centerBwd - 1; // -1 because the starting pixel is counted twice
 	range -= res[s_2];
 
-	auto next = [&](auto& cur, int i) {
+	auto next = [&](FastEdgeToEdgeCounter& cur, int i) {
 		auto v = cur.stepToNextEdge(range);
 		res[s_2 + i] = v;
 		range -= v;
@@ -105,19 +104,23 @@ std::optional<QuadrilateralF> FindConcentricPatternCorners(const BitMatrix& imag
 
 struct ConcentricPattern : public PointF
 {
-	int size = 0;
+	int size;
+    ConcentricPattern() : size(0) {}
+	ConcentricPattern(const PointF& pt, int size)
+	    : PointF(pt), size(size)
+	{}
 };
 
 template <bool E2E = false, typename PATTERN>
 std::optional<ConcentricPattern> LocateConcentricPattern(const BitMatrix& image, PATTERN pattern, PointF center, int range)
 {
-	auto cur = BitMatrixCursor(image, PointI(center), {});
+	auto cur = BitMatrixCursor<PointI>(image, PointI(center), {});
 	int minSpread = image.width(), maxSpread = 0;
 	// TODO: setting maxError to 1 can subtantially help with detecting symbols with low print quality resulting in damaged
 	// finder patterns, but it sutantially increases the runtime (approx. 20% slower for the falsepositive images).
 	int maxError = 0;
-	for (auto d : {PointI{0, 1}, {1, 0}}) {
-		int spread = CheckSymmetricPattern<E2E>(cur.setDirection(d), pattern, range, true);
+	for (auto d : {PointI{0, 1}, PointI{1, 0}}) {
+		int spread = CheckSymmetricPattern<E2E,PATTERN>(cur.setDirection(d), pattern, range, true);
 		if (spread)
 			UpdateMinMax(minSpread, maxSpread, spread);
 		else if (--maxError < 0)
@@ -125,8 +128,8 @@ std::optional<ConcentricPattern> LocateConcentricPattern(const BitMatrix& image,
 	}
 
 #if 1
-	for (auto d : {PointI{1, 1}, {1, -1}}) {
-		int spread = CheckSymmetricPattern<true>(cur.setDirection(d), pattern, range * 2, false);
+	for (auto d : {PointI{1, 1}, PointI{1, -1}}) {
+		int spread = CheckSymmetricPattern<true,PATTERN>(cur.setDirection(d), pattern, range * 2, false);
 		if (spread)
 			UpdateMinMax(minSpread, maxSpread, spread);
 		else if (--maxError < 0)

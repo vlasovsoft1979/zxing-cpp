@@ -34,7 +34,7 @@ void TextDecoder::Append(std::string& str, const uint8_t* bytes, size_t length, 
 		throw std::runtime_error("zueci_dest_len_utf8 failed");
 
 	str.resize(str_len + utf8_len); // Precise length
-	unsigned char *utf8_buf = reinterpret_cast<unsigned char *>(str.data()) + str_len;
+	unsigned char *utf8_buf = reinterpret_cast<unsigned char *>(const_cast<char*>(str.data())) + str_len;
 
 	error_number = zueci_eci_to_utf8(eci, bytes, bytes_len, replacement, flags, utf8_buf, &utf8_len);
 	if (error_number >= ZUECI_ERROR) {

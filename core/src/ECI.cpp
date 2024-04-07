@@ -56,7 +56,8 @@ std::string ToString(ECI eci)
 
 CharacterSet ToCharacterSet(ECI eci)
 {
-	if (auto it = ECI_TO_CHARSET.find(eci); it != ECI_TO_CHARSET.end())
+	auto it = ECI_TO_CHARSET.find(eci);
+	if (it != ECI_TO_CHARSET.end())
 		return it->second;
 
 	return CharacterSet::Unknown;
@@ -71,9 +72,9 @@ ECI ToECI(CharacterSet cs)
 	if (cs == CharacterSet::Cp437)
 		return ECI::Cp437;
 
-	for (auto& [key, value] : ECI_TO_CHARSET)
-		if (value == cs)
-			return key;
+	for (auto& elem : ECI_TO_CHARSET)
+		if (elem.second == cs)
+			return elem.first;
 
 	return ECI::Unknown;
 }

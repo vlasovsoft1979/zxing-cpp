@@ -33,18 +33,18 @@ DetectorResult SampleGrid(const BitMatrix& image, int width, int height, const R
 	if (width <= 0 || height <= 0)
 		return {};
 
-	for (auto&& [x0, x1, y0, y1, mod2Pix] : rois) {
+	for (auto&& roi : rois) {
 		// Precheck the corners of every roi to bail out early if the grid is "obviously" not completely inside the image
-		auto isInside = [&mod2Pix = mod2Pix, &image](int x, int y) { return image.isIn(mod2Pix(centered(PointI(x, y)))); };
-		if (!mod2Pix.isValid() || !isInside(x0, y0) || !isInside(x1 - 1, y0) || !isInside(x1 - 1, y1 - 1) || !isInside(x0, y1 - 1))
+		auto isInside = [&roi, &image](int x, int y) { return image.isIn(roi.mod2Pix(centered(PointI(x, y)))); };
+		if (!roi.mod2Pix.isValid() || !isInside(roi.x0, roi.y0) || !isInside(roi.x1 - 1, roi.y0) || !isInside(roi.x1 - 1, roi.y1 - 1) || !isInside(roi.x0, roi.y1 - 1))
 			return {};
 	}
 
 	BitMatrix res(width, height);
-	for (auto&& [x0, x1, y0, y1, mod2Pix] : rois) {
-		for (int y = y0; y < y1; ++y)
-			for (int x = x0; x < x1; ++x) {
-				auto p = mod2Pix(centered(PointI{x, y}));
+	for (auto&& roi : rois) {
+		for (int y = roi.y0; y < roi.y1; ++y)
+			for (int x = roi.x0; x < roi.x1; ++x) {
+				auto p = roi.mod2Pix(centered(PointI{x, y}));
 				// Due to a "numerical instability" in the PerspectiveTransform generation/application it has been observed
 				// that even though all boundary grid points get projected inside the image, it can still happen that an
 				// inner grid points is not. See #563. A true perspective transformation cannot have this property.
@@ -75,9 +75,9 @@ DetectorResult SampleGrid(const BitMatrix& image, int width, int height, const R
 #endif
 
 	auto projectCorner = [&](PointI p) {
-		for (auto&& [x0, x1, y0, y1, mod2Pix] : rois)
-			if (x0 <= p.x && p.x <= x1 && y0 <= p.y && p.y <= y1)
-				return PointI(mod2Pix(PointF(p)) + PointF(0.5, 0.5));
+		for (auto&& roi : rois)
+			if (roi.x0 <= p.x && p.x <= roi.x1 && roi.y0 <= p.y && p.y <= roi.y1)
+				return PointI(roi.mod2Pix(PointF(p)) + PointF(0.5, 0.5));
 
 		return PointI();
 	};

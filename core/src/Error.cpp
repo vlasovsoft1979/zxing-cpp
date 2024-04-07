@@ -21,7 +21,8 @@ std::string ToString(const Error& e)
 	std::string ret = name[static_cast<int>(e.type())];
 	if (!e.msg().empty())
 		ret += " (" + e.msg() + ")";
-	if (auto location = e.location(); !location.empty())
+	auto location = e.location();
+	if (!location.empty())
 		ret += " @ " + e.location();
 	return ret;
 }

@@ -6,7 +6,7 @@
 #pragma once
 
 #include <string>
-#include <string_view>
+#include "tools/string_view.hpp"
 
 namespace ZXing {
 
@@ -42,7 +42,7 @@ enum class CharacterSet : unsigned char
 	EUC_JP,
 	EUC_KR,
 	UTF16BE,
-	UnicodeBig [[deprecated]] = UTF16BE,
+	UnicodeBig = UTF16BE,
 	UTF8,
 	UTF16LE,
 	UTF32BE,

@@ -14,6 +14,7 @@
 #include <numeric>
 #include <string>
 #include <utility>
+#include "tools/type_traits.hpp"
 
 namespace ZXing {
 
@@ -46,14 +47,14 @@ inline bool Contains(const char* str, char c) {
 	return strchr(str, c) != nullptr;
 }
 
-template <template <typename...> typename C, typename... Ts>
-auto FirstOrDefault(C<Ts...>&& container)
+template <typename C>
+auto FirstOrDefault(C&& container) -> typename C::value_type
 {
-	return container.empty() ? typename C<Ts...>::value_type() : std::move(container.front());
+	return container.empty() ? typename C::value_type() : std::move(container.front());
 }
 
 template <typename Iterator, typename Value = typename std::iterator_traits<Iterator>::value_type, typename Op = std::plus<Value>>
-Value Reduce(Iterator b, Iterator e, Value v = Value{}, Op op = {}) {
+Value Reduce(Iterator b, Iterator e, Value v = Value{}, Op op = Op{}) {
 	// std::reduce() first sounded like a better implementation because it is not implemented as a strict left-fold
 	// operation, meaning the order of the op-application is not specified. This sounded like an optimization opportunity
 	// but it turns out that for this use case it actually does not make a difference (falsepositives runtime). And
@@ -63,7 +64,7 @@ Value Reduce(Iterator b, Iterator e, Value v = Value{}, Op op = {}) {
 }
 
 template <typename Container, typename Value = typename Container::value_type, typename Op = std::plus<Value>>
-Value Reduce(const Container& c, Value v = Value{}, Op op = {}) {
+Value Reduce(const Container& c, Value v = Value{}, Op op = Op{}) {
 	return Reduce(std::begin(c), std::end(c), v, op);
 }
 
@@ -104,7 +105,7 @@ T ToDigit(int i)
 	return static_cast<T>('0' + i);
 }
 
-template<typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
 std::string ToString(T val, int len)
 {
 	std::string result(len--, '0');

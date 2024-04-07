@@ -11,7 +11,7 @@
 #include <array>
 #include <stdexcept>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 /**
 * <p>Encapsulates data masks for the data bits in a QR  and micro QR code, per ISO 18004:2006 6.8.</p>
@@ -25,7 +25,7 @@ inline bool GetDataMaskBit(int maskIndex, int x, int y, bool isMicro = false)
 	if (isMicro) {
 		if (maskIndex < 0 || maskIndex >= 4)
 			throw std::invalid_argument("QRCode maskIndex out of range");
-		maskIndex = std::array{1, 4, 6, 7}[maskIndex]; // map from MQR to QR indices
+		maskIndex = std::array<int, 4>{{1, 4, 6, 7}}[maskIndex]; // map from MQR to QR indices
 	}
 
 	switch (maskIndex) {
@@ -47,4 +47,4 @@ inline bool GetMaskedBit(const BitMatrix& bits, int x, int y, int maskIndex, boo
 	return GetDataMaskBit(maskIndex, x, y, isMicro) != bits.get(x, y);
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

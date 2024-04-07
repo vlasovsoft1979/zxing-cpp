@@ -20,9 +20,9 @@ public:
 
 	std::string location() const;
 
-	Error() = default;
-	Error(Type type, std::string msg = {}) : _msg(std::move(msg)), _type(type) {}
-	Error(const char* file, short line, Type type, std::string msg = {}) : _msg(std::move(msg)), _file(file), _line(line), _type(type) {}
+	Error() : _file(nullptr), _line(-1), _type(Type::None) {}
+	Error(Type type, std::string msg = std::string()) : _msg(std::move(msg)), _type(type) {}
+	Error(const char* file, short line, Type type, std::string msg = std::string()) : _msg(std::move(msg)), _file(file), _line(line), _type(type) {}
 
 	static constexpr auto Format = Type::Format;
 	static constexpr auto Checksum = Type::Checksum;
@@ -36,9 +36,9 @@ public:
 
 protected:
 	std::string _msg;
-	const char* _file = nullptr;
-	short _line = -1;
-	Type _type = Type::None;
+	const char* _file;
+	short _line;
+	Type _type;
 };
 
 inline bool operator==(const Error& e, Error::Type t) noexcept { return e.type() == t; }

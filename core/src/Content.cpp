@@ -32,11 +32,11 @@ void Content::ForEachECIBlock(FUNC func) const
 		func(defaultECI, 0, encodings.front().pos);
 
 	for (int i = 0; i < Size(encodings); ++i) {
-		auto [eci, start] = encodings[i];
+		auto enc = encodings[i];
 		int end = i + 1 == Size(encodings) ? Size(bytes) : encodings[i + 1].pos;
 
-		if (start != end)
-			func(eci, start, end);
+		if (enc.pos != end)
+			func(enc.eci, enc.pos, end);
 	}
 }
 
@@ -51,7 +51,7 @@ void Content::switchEncoding(ECI eci, bool isECI)
 	hasECI |= isECI;
 }
 
-Content::Content() {}
+Content::Content() : defaultCharset(CharacterSet::Unknown), hasECI(false) {}
 
 Content::Content(ByteArray&& bytes, SymbologyIdentifier si) : bytes(std::move(bytes)), symbology(si) {}
 
@@ -226,7 +226,7 @@ ContentType Content::type() const
 		binaryECIs.push_back((!IsText(eci)
 							  || (ToInt(eci) > 0 && ToInt(eci) < 28 && ToInt(eci) != 25
 								  && std::any_of(bytes.begin() + begin, bytes.begin() + end,
-												 [](auto c) { return c < 0x20 && c != 0x9 && c != 0xa && c != 0xd; }))));
+												 [](uint8_t c) { return c < 0x20 && c != 0x9 && c != 0xa && c != 0xd; }))));
 	});
 
 	if (!Contains(binaryECIs, true))

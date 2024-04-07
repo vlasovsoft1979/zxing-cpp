@@ -27,7 +27,7 @@ BitMatrix BinaryBitmap::binarize(const uint8_t threshold) const
 		for (auto src = _buffer.data(0, 0), end = _buffer.data(0, height()); src != end; ++src, ++dst)
 			*dst = (*src <= threshold) * BitMatrix::SET_V;
 	} else {
-		auto processLine = [&res, threshold](int y, const auto* src, const int stride) {
+		auto processLine = [&res, threshold](int y, const uint8_t* src, const int stride) {
 			for (auto& dst : res.row(y)) {
 				dst = (*src <= threshold) * BitMatrix::SET_V;
 				src += stride;
@@ -47,7 +47,7 @@ BitMatrix BinaryBitmap::binarize(const uint8_t threshold) const
 	return res;
 }
 
-BinaryBitmap::BinaryBitmap(const ImageView& buffer) : _cache(new Cache), _buffer(buffer) {}
+BinaryBitmap::BinaryBitmap(const ImageView& buffer) : _cache(new Cache), _buffer(buffer), _inverted(false), _closed(false) {}
 
 BinaryBitmap::~BinaryBitmap() = default;
 

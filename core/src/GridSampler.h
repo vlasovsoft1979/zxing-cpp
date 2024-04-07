@@ -51,7 +51,7 @@ public:
 	PerspectiveTransform mod2Pix;
 };
 
-using ROIs = std::vector<ROI>;
+typedef std::vector<ROI> ROIs;
 
 DetectorResult SampleGrid(const BitMatrix& image, int width, int height, const ROIs& rois);
 

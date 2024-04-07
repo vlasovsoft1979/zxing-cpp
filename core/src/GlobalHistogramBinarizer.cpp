@@ -19,13 +19,13 @@ static constexpr int LUMINANCE_BITS = 5;
 static constexpr int LUMINANCE_SHIFT = 8 - LUMINANCE_BITS;
 static constexpr int LUMINANCE_BUCKETS = 1 << LUMINANCE_BITS;
 
-using Histogram = std::array<uint16_t, LUMINANCE_BUCKETS>;
+typedef std::array<uint16_t, LUMINANCE_BUCKETS> Histogram;
 
 GlobalHistogramBinarizer::GlobalHistogramBinarizer(const ImageView& buffer) : BinaryBitmap(buffer) {}
 
 GlobalHistogramBinarizer::~GlobalHistogramBinarizer() = default;
 
-using ImageLineView = Range<StrideIter<const uint8_t*>>;
+typedef Range<StrideIter<const uint8_t*>> ImageLineView;
 
 inline ImageLineView RowView(const ImageView& iv, int row)
 {
@@ -44,7 +44,7 @@ static void ThresholdSharpened(const ImageLineView in, int threshold, std::vecto
 	*o++ = (*i++ <= threshold) * BitMatrix::SET_V;
 }
 
-static auto GenHistogram(const ImageLineView line)
+static auto GenHistogram(const ImageLineView line) -> Histogram
 {
 	// This code causes about 20% of the total runtime on an AVX2 system for a EAN13 search on Lum input data.
 	// Trying to increase the performance by performing 2 or 4 "parallel" histograms helped nothing.
@@ -127,13 +127,13 @@ bool GlobalHistogramBinarizer::getPatternRow(int row, int rotation, PatternRow& 
 	if (threshold <= 0)
 		return false;
 
-	thread_local std::vector<uint8_t> binarized;
+	std::vector<uint8_t> binarized;
 	// the optimizer can generate a specialized version for pixStride==1 (non-rotated input) that is about 8x faster on AVX2 hardware
 	if (lineView.begin().stride == 1)
 		ThresholdSharpened(lineView, threshold, binarized);
 	else
 		ThresholdSharpened(lineView, threshold, binarized);
-	GetPatternRow(Range(binarized), res);
+	GetPatternRow(Range<std::vector<uint8_t>::const_iterator>(binarized), res);
 
 	return true;
 }

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <algorithm>
+#include "tools/algorithm.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <memory>
@@ -24,10 +24,10 @@ enum class ImageFormat : uint32_t
 	ARGB = 0x04010203,
 	BGRA = 0x04020100,
 	ABGR = 0x04030201,
-	RGBX [[deprecated("use RGBA")]] = RGBA,
-	XRGB [[deprecated("use ARGB")]] = ARGB,
-	BGRX [[deprecated("use BGRA")]] = BGRA,
-	XBGR [[deprecated("use ABGR")]] = ABGR,
+	RGBX /*[[deprecated("use RGBA")]]*/ = RGBA,
+	XRGB /*[[deprecated("use ARGB")]]*/ = ARGB,
+	BGRX /*[[deprecated("use BGRA")]]*/ = BGRA,
+	XBGR /*[[deprecated("use ABGR")]]*/ = ABGR,
 };
 
 constexpr inline int PixStride(ImageFormat format) { return (static_cast<uint32_t>(format) >> 3*8) & 0xFF; }
@@ -49,14 +49,14 @@ constexpr inline uint8_t RGBToLum(unsigned r, unsigned g, unsigned b)
 class ImageView
 {
 protected:
-	const uint8_t* _data = nullptr;
-	ImageFormat _format = ImageFormat::None;
-	int _width = 0, _height = 0, _pixStride = 0, _rowStride = 0;
+	const uint8_t* _data;
+	ImageFormat _format;
+	int _width, _height, _pixStride, _rowStride;
 
 public:
 	/** ImageView default constructor creates a 'null' image view
 	 */
-	ImageView() = default;
+	ImageView() : _data(nullptr), _format(ImageFormat::None), _width(0), _height(0), _pixStride(0), _rowStride(0) {}
 
 	/**
 	 * ImageView constructor
@@ -93,8 +93,25 @@ public:
 	 * ImageView constructor with bounds checking
 	 */
 	ImageView(const uint8_t* data, int size, int width, int height, ImageFormat format, int rowStride = 0, int pixStride = 0)
-		: ImageView(data, width, height, format, rowStride, pixStride)
+		: _data(data),
+		  _format(format),
+		  _width(width),
+		  _height(height),
+		  _pixStride(pixStride ? pixStride : PixStride(format)),
+		  _rowStride(rowStride ? rowStride : width * _pixStride)
 	{
+		// TODO: [[deprecated]] this check is to prevent exising code from suddenly throwing, remove in 3.0
+		if (_data == nullptr && _width == 0 && _height == 0 && rowStride == 0 && pixStride == 0) {
+			fprintf(stderr, "zxing-cpp deprecation warning: ImageView(nullptr, ...) will throw in the future, use ImageView()\n");
+			return;
+		}
+
+		if (_data == nullptr)
+			throw std::invalid_argument("Can not construct an ImageView from a NULL pointer");
+
+		if (_width <= 0 || _height <= 0)
+			throw std::invalid_argument("Neither width nor height of ImageView can be less or equal to 0");
+
 		if (_rowStride < 0 || _pixStride < 0 || size < _height * _rowStride)
 			throw std::invalid_argument("ImageView parameters are inconsistent (out of bounds)");
 	}
@@ -137,11 +154,14 @@ public:
 class Image : public ImageView
 {
 	std::unique_ptr<uint8_t[]> _memory;
-	Image(std::unique_ptr<uint8_t[]>&& data, int w, int h, ImageFormat f) : ImageView(data.get(), w, h, f), _memory(std::move(data)) {}
 
 public:
 	Image() = default;
-	Image(int w, int h, ImageFormat f = ImageFormat::Lum) : Image(std::make_unique<uint8_t[]>(w * h * PixStride(f)), w, h, f) {}
+    Image(int w, int h, ImageFormat f = ImageFormat::Lum) 
+        : ImageView(new uint8_t[w * h * PixStride(f)], w, h, f)
+        , _memory(const_cast<uint8_t*>(_data))
+    {
+    }
 };
 
 } // ZXing

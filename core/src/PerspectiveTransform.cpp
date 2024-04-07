@@ -45,7 +45,9 @@ PerspectiveTransform PerspectiveTransform::times(const PerspectiveTransform& oth
 
 PerspectiveTransform PerspectiveTransform::UnitSquareTo(const QuadrilateralF& q)
 {
-	auto [x0, y0, x1, y1, x2, y2, x3, y3] = reinterpret_cast<const std::array<PointF::value_t, 8>&>(q);
+	auto arr = reinterpret_cast<const std::array<PointF::value_t, 8>&>(q);
+	auto x0 = arr[0], y0 = arr[1], x1 = arr[2], y1 = arr[3],
+		 x2 = arr[4], y2 = arr[5], x3 = arr[6], y3 = arr[7];
 
 	auto d3 = q[0] - q[1] + q[2] - q[3];
 	if (d3 == PointF(0, 0)) {

@@ -23,8 +23,12 @@ std::string ToString(ContentType type);
 
 struct SymbologyIdentifier
 {
-	char code = 0, modifier = 0, eciModifierOffset = 0;
-	AIFlag aiFlag = AIFlag::None;
+	char code, modifier, eciModifierOffset;
+	AIFlag aiFlag;
+
+	SymbologyIdentifier() : code(0), modifier(0), eciModifierOffset(0), aiFlag(AIFlag::None) {}
+	SymbologyIdentifier(char code, char modifier, char eciModifierOffset, AIFlag aiFlag = AIFlag::None)
+	    : code(code), modifier(modifier), eciModifierOffset(eciModifierOffset), aiFlag(aiFlag) {}
 
 	std::string toString(bool hasECI = false) const
 	{
@@ -50,8 +54,8 @@ public:
 	ByteArray bytes;
 	std::vector<Encoding> encodings;
 	SymbologyIdentifier symbology;
-	CharacterSet defaultCharset = CharacterSet::Unknown;
-	bool hasECI = false;
+	CharacterSet defaultCharset;
+	bool hasECI;
 
 	Content();
 	Content(ByteArray&& bytes, SymbologyIdentifier si);

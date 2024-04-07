@@ -34,9 +34,9 @@
 #define printf(...){}
 #endif
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
-constexpr auto PATTERN = FixedPattern<5, 7>{1, 1, 3, 1, 1};
+constexpr auto PATTERN = FixedPattern<5, 7>{{1, 1, 3, 1, 1}};
 constexpr bool E2E = true;
 
 PatternView FindPattern(const PatternView& view)
@@ -64,7 +64,7 @@ std::vector<ConcentricPattern> FindFinderPatterns(const BitMatrix& image, bool t
 		skip = MIN_SKIP;
 
 	std::vector<ConcentricPattern> res;
-	[[maybe_unused]] int N = 0;
+	/*[[maybe_unused]]*/ int N = 0;
 	PatternRow row;
 
 	for (int y = skip - 1; y < height; y += skip) {
@@ -75,7 +75,7 @@ std::vector<ConcentricPattern> FindFinderPatterns(const BitMatrix& image, bool t
 			PointF p(next.pixelsInFront() + next[0] + next[1] + next[2] / 2.0, y + 0.5);
 
 			// make sure p is not 'inside' an already found pattern area
-			if (FindIf(res, [p](const auto& old) { return distance(p, old) < old.size / 2; }) == res.end()) {
+			if (FindIf(res, [p](const ConcentricPattern& old) { return distance(p, old) < old.size / 2; }) == res.end()) {
 				log(p);
 				N++;
 				auto pattern = LocateConcentricPattern<E2E>(image, PATTERN, p,
@@ -109,10 +109,10 @@ std::vector<ConcentricPattern> FindFinderPatterns(const BitMatrix& image, bool t
  */
 FinderPatternSets GenerateFinderPatternSets(FinderPatterns& patterns)
 {
-	std::sort(patterns.begin(), patterns.end(), [](const auto& a, const auto& b) { return a.size < b.size; });
+	std::sort(patterns.begin(), patterns.end(), [](const ConcentricPattern& a, const ConcentricPattern& b) { return a.size < b.size; });
 
 	auto sets            = std::multimap<double, FinderPatternSet>();
-	auto squaredDistance = [](const auto* a, const auto* b) {
+	auto squaredDistance = [](const ConcentricPattern* a, const ConcentricPattern* b) {
 		// The scaling of the distance by the b/a size ratio is a very coarse compensation for the shortening effect of
 		// the camera projection on slanted symbols. The fact that the size of the finder pattern is proportional to the
 		// distance from the camera is used here. This approximation only works if a < b < 2*a (see below).
@@ -158,8 +158,8 @@ FinderPatternSets GenerateFinderPatternSets(FinderPatterns& patterns)
 					continue;
 
 				// Estimate the module count and ignore this set if it can not result in a valid decoding
-				if (auto moduleCount = (distAB + distBC) / (2 * (a->size + b->size + c->size) / (3 * 7.f)) + 7;
-					moduleCount < 21 * 0.9 || moduleCount > 177 * 1.5) // moduleCount may be overestimated, see above
+				auto moduleCount = (distAB + distBC) / (2 * (a->size + b->size + c->size) / (3 * 7.f)) + 7;
+				if (moduleCount < 21 * 0.9 || moduleCount > 177 * 1.5) // moduleCount may be overestimated, see above
 					continue;
 
 				// Make sure the angle between AB and BC does not deviate from 90° by more than 45°
@@ -184,7 +184,7 @@ FinderPatternSets GenerateFinderPatternSets(FinderPatterns& patterns)
 				// (this has performance implications while limiting the maximal number of detected symbols)
 				const auto setSizeLimit = 256;
 				if (sets.size() < setSizeLimit || sets.crbegin()->first > d) {
-					sets.emplace(d, FinderPatternSet{*a, *b, *c});
+					sets.insert(std::make_pair(d, FinderPatternSet{*a, *b, *c}));
 					if (sets.size() > setSizeLimit)
 						sets.erase(std::prev(sets.end()));
 				}
@@ -195,8 +195,8 @@ FinderPatternSets GenerateFinderPatternSets(FinderPatterns& patterns)
 	// convert from multimap to vector
 	FinderPatternSets res;
 	res.reserve(sets.size());
-	for (auto& [d, s] : sets)
-		res.push_back(s);
+	for (auto& elem : sets)
+		res.push_back(elem.second);
 
 	printf("FPSets: %d\n", Size(res));
 
@@ -217,9 +217,11 @@ static double EstimateModuleSize(const BitMatrix& image, ConcentricPattern a, Co
 
 struct DimensionEstimate
 {
-	int dim = 0;
-	double ms = 0;
-	int err = 4;
+	int dim;
+	double ms;
+	int err;
+	DimensionEstimate() : dim(0), ms(0), err(4) {}
+	DimensionEstimate(int dim, double ms, int err) : dim(dim), ms(ms), err(err) {}
 };
 
 static DimensionEstimate EstimateDimension(const BitMatrix& image, ConcentricPattern a, ConcentricPattern b)
@@ -296,7 +298,7 @@ static std::optional<PointF> LocateAlignmentPattern(const BitMatrix& image, int 
 {
 	log(estimate, 4);
 
-	for (auto d : {PointF{0, 0}, {0, -1}, {0, 1}, {-1, 0}, {1, 0}, {-1, -1}, {1, -1}, {1, 1}, {-1, 1},
+	for (auto d : {PointF{0, 0}, PointF{0, -1}, PointF{0, 1}, PointF{-1, 0}, PointF{1, 0}, PointF{-1, -1}, PointF{1, -1}, PointF{1, 1}, PointF{-1, 1},
 #if 1
 				   }) {
 #else
@@ -515,13 +517,13 @@ DetectorResult SampleQR(const BitMatrix& image, const FinderPatternSet& fp)
 */
 DetectorResult DetectPureQR(const BitMatrix& image)
 {
-	using Pattern = std::array<PatternView::value_type, PATTERN.size()>;
+	typedef std::array<PatternView::value_type, PATTERN.size()> Pattern;
 
 #ifdef PRINT_DEBUG
 	SaveAsPBM(image, "weg.pbm");
 #endif
 
-	constexpr int MIN_MODULES = Version::SymbolSize(1, Type::Model2).x;
+	const int MIN_MODULES = Version::SymbolSize(1, Type::Model2).x;
 
 	int left, top, width, height;
 	if (!image.findBoundingBox(left, top, width, height, MIN_MODULES) || std::abs(width - height) > 1)
@@ -532,8 +534,8 @@ DetectorResult DetectPureQR(const BitMatrix& image)
 	PointI tl{left, top}, tr{right, top}, bl{left, bottom};
 	Pattern diagonal;
 	// allow corners be moved one pixel inside to accommodate for possible aliasing artifacts
-	for (auto [p, d] : {std::pair(tl, PointI{1, 1}), {tr, {-1, 1}}, {bl, {1, -1}}}) {
-		diagonal = BitMatrixCursorI(image, p, d).readPatternFromBlack<Pattern>(1, width / 3 + 1);
+	for (auto elem : {std::make_pair(tl, PointI{1, 1}), std::make_pair(tr, PointI{-1, 1}), std::make_pair(bl, PointI{1, -1})}) {
+		diagonal = BitMatrixCursorI(image, elem.first, elem.second).readPatternFromBlack<Pattern>(1, width / 3 + 1);
 		if (!IsPattern(diagonal, PATTERN))
 			return {};
 	}
@@ -563,9 +565,9 @@ DetectorResult DetectPureQR(const BitMatrix& image)
 
 DetectorResult DetectPureMQR(const BitMatrix& image)
 {
-	using Pattern = std::array<PatternView::value_type, PATTERN.size()>;
+	typedef std::array<PatternView::value_type, PATTERN.size()> Pattern;
 
-	constexpr int MIN_MODULES = Version::SymbolSize(1, Type::Micro).x;
+	const int MIN_MODULES = Version::SymbolSize(1, Type::Micro).x;
 
 	int left, top, width, height;
 	if (!image.findBoundingBox(left, top, width, height, MIN_MODULES) || std::abs(width - height) > 1)
@@ -602,18 +604,18 @@ DetectorResult DetectPureMQR(const BitMatrix& image)
 
 DetectorResult DetectPureRMQR(const BitMatrix& image)
 {
-	constexpr auto SUBPATTERN = FixedPattern<4, 4>{1, 1, 1, 1};
-	constexpr auto TIMINGPATTERN = FixedPattern<10, 10>{1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	constexpr auto SUBPATTERN = FixedPattern<4, 4>{{1, 1, 1, 1}};
+	constexpr auto TIMINGPATTERN = FixedPattern<10, 10>{{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
-	using Pattern = std::array<PatternView::value_type, PATTERN.size()>;
-	using SubPattern = std::array<PatternView::value_type, SUBPATTERN.size()>;
-	using TimingPattern = std::array<PatternView::value_type, TIMINGPATTERN.size()>;
+	typedef std::array<PatternView::value_type, PATTERN.size()> Pattern;
+	typedef std::array<PatternView::value_type, SUBPATTERN.size()> SubPattern;
+	typedef std::array<PatternView::value_type, TIMINGPATTERN.size()> TimingPattern;
 
 #ifdef PRINT_DEBUG
 	SaveAsPBM(image, "weg.pbm");
 #endif
 
-	constexpr int MIN_MODULES = Version::SymbolSize(1, Type::rMQR).y;
+	const int MIN_MODULES = Version::SymbolSize(1, Type::rMQR).y;
 
 	int left, top, width, height;
 	if (!image.findBoundingBox(left, top, width, height, MIN_MODULES) || height >= width)
@@ -636,8 +638,8 @@ DetectorResult DetectPureRMQR(const BitMatrix& image)
 	float moduleSize = Reduce(diagonal) + Reduce(subdiagonal);
 
 	// Horizontal timing patterns
-	for (auto [p, d] : {std::pair(tr, PointI{-1, 0}), {bl, {1, 0}}, {tl, {1, 0}}, {br, {-1, 0}}}) {
-		auto cur = BitMatrixCursorI(image, p, d);
+	for (auto elem : { std::make_pair(tr, PointI{-1, 0}), std::make_pair(bl, PointI{1, 0}), std::make_pair(tl, PointI{1, 0}), std::make_pair(br, PointI{-1, 0}) }) {
+		auto cur = BitMatrixCursorI(image, elem.first, elem.second);
 		// skip corner / finder / sub pattern edge
 		cur.stepToEdge(2 + cur.isWhite());
 		auto timing = cur.readPattern<TimingPattern>();
@@ -676,7 +678,7 @@ DetectorResult SampleMQR(const BitMatrix& image, const ConcentricPattern& fp)
 #if defined(_MSVC_LANG) // TODO: see MSVC issue https://developercommunity.visualstudio.com/t/constexpr-object-is-unable-to-be-used-as/10035065
 	static
 #else
-	constexpr
+	//constexpr
 #endif
 		const PointI FORMAT_INFO_COORDS[] = {{0, 8}, {1, 8}, {2, 8}, {3, 8}, {4, 8}, {5, 8}, {6, 8}, {7, 8}, {8, 8},
 											 {8, 7}, {8, 6}, {8, 5}, {8, 4}, {8, 3}, {8, 2}, {8, 1}, {8, 0}};
@@ -779,9 +781,9 @@ DetectorResult SampleRMQR(const BitMatrix& image, const ConcentricPattern& fp)
 		auto tl = Center(a);
 		auto br = Center(b);
 		// rotate points such that topLeft of a is furthest away from b and topLeft of b is closest to a
-		auto dist2B = [c = br](auto a, auto b) { return distance(a, c) < distance(b, c); };
+		auto dist2B = [c = br](const PointF& a, const PointF& b) { return distance(a, c) < distance(b, c); };
 		auto offsetA = narrow_cast<int>(std::max_element(a.begin(), a.end(), dist2B) - a.begin());
-		auto dist2A = [c = tl](auto a, auto b) { return distance(a, c) < distance(b, c); };
+		auto dist2A = [c = tl](const PointF& a, const PointF& b) { return distance(a, c) < distance(b, c); };
 		auto offsetB = narrow_cast<int>(std::min_element(b.begin(), b.end(), dist2A) - b.begin());
 
 		a = RotatedCorners(a, offsetA);
@@ -818,4 +820,4 @@ DetectorResult SampleRMQR(const BitMatrix& image, const ConcentricPattern& fp)
 	return SampleGrid(image, dim.x, dim.y, bestPT);
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

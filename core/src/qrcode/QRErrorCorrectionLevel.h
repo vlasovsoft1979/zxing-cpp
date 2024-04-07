@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 /**
 * <p>See ISO 18004:2006, 6.5.1. This enum encapsulates the four error correction levels
@@ -36,4 +36,4 @@ enum class Type
 	rMQR,
 };
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

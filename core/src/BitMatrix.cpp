@@ -14,6 +14,8 @@
 
 namespace ZXing {
 
+constexpr BitMatrix::data_t BitMatrix::UNSET_V;
+
 void
 BitMatrix::setRegion(int left, int top, int width, int height)
 {
@@ -94,12 +96,13 @@ BitMatrix::findBoundingBox(int &left, int& top, int& width, int& height, int min
 	return width >= minSize && height >= minSize;
 }
 
-static auto isSet = [](auto v) { return bool(v); };
+template <typename T>
+static bool isSet(const T& v) { return bool(v); };
 
 bool
 BitMatrix::getTopLeftOnBit(int& left, int& top) const
 {
-	int bitsOffset = (int)std::distance(_bits.begin(), std::find_if(_bits.begin(), _bits.end(), isSet));
+	int bitsOffset = (int)std::distance(_bits.begin(), std::find_if(_bits.begin(), _bits.end(), isSet<data_t>));
 	if (bitsOffset == Size(_bits)) {
 		return false;
 	}
@@ -111,7 +114,7 @@ BitMatrix::getTopLeftOnBit(int& left, int& top) const
 bool
 BitMatrix::getBottomRightOnBit(int& right, int& bottom) const
 {
-	int bitsOffset = Size(_bits) - 1 - (int)std::distance(_bits.rbegin(), std::find_if(_bits.rbegin(), _bits.rend(), isSet));
+	int bitsOffset = Size(_bits) - 1 - (int)std::distance(_bits.rbegin(), std::find_if(_bits.rbegin(), _bits.rend(), isSet<data_t>));
 	if (bitsOffset < 0) {
 		return false;
 	}

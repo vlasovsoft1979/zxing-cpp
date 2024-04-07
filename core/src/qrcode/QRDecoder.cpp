@@ -26,7 +26,7 @@
 #include <utility>
 #include <vector>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 /**
 * <p>Given data and error-correction codewords received, possibly corrupted by errors, attempts to
@@ -261,12 +261,15 @@ DecoderResult DecodeBitStream(ByteArray&& bytes, const Version& version, ErrorCo
 					throw FormatError("AIM Application Indicator (FNC1 in second position) at illegal position");
 				result.symbology.modifier = '5'; // As above
 				// ISO/IEC 18004:2015 7.4.8.3 AIM Application Indicator (FNC1 in second position), "00-99" or "A-Za-z"
-				if (int appInd = bits.readBits(8); appInd < 100) // "00-09"
+				{
+				int appInd = bits.readBits(8);
+				if (appInd < 100) // "00-09"
 					result += ZXing::ToString(appInd, 2);
 				else if ((appInd >= 165 && appInd <= 190) || (appInd >= 197 && appInd <= 222)) // "A-Za-z"
 					result += narrow_cast<uint8_t>(appInd - 100);
 				else
 					throw FormatError("Invalid AIM Application Indicator");
+				}
 				result.symbology.aiFlag = AIFlag::AIM; // see also above
 				break;
 			case CodecMode::STRUCTURED_APPEND:
@@ -285,7 +288,8 @@ DecoderResult DecodeBitStream(ByteArray&& bytes, const Version& version, ErrorCo
 			case CodecMode::HANZI: {
 				// First handle Hanzi mode which does not start with character count
 				// chinese mode contains a sub set indicator right after mode indicator
-				if (int subset = bits.readBits(4); subset != 1) // GB2312_SUBSET is the only supported one right now
+				int subset = bits.readBits(4);
+				if (subset != 1) // GB2312_SUBSET is the only supported one right now
 					throw FormatError("Unsupported HANZI subset");
 				int count = bits.readBits(CharacterCountBits(mode, version));
 				DecodeHanziSegment(bits, count, result);
@@ -345,7 +349,7 @@ DecoderResult Decode(const BitMatrix& bits)
 		return FormatError("Failed to get data blocks");
 
 	// Count total number of data bytes
-	const auto op = [](auto totalBytes, const auto& dataBlock){ return totalBytes + dataBlock.numDataCodewords();};
+	const auto op = [](int totalBytes, const DataBlock& dataBlock){ return totalBytes + dataBlock.numDataCodewords();};
 	const auto totalBytes = Reduce(dataBlocks, int{}, op);
 	ByteArray resultBytes(totalBytes);
 	auto resultIterator = resultBytes.begin();
@@ -366,4 +370,4 @@ DecoderResult Decode(const BitMatrix& bits)
 	return DecodeBitStream(std::move(resultBytes), version, formatInfo.ecLevel).setIsMirrored(formatInfo.isMirrored);
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

@@ -10,7 +10,7 @@
 #include "QRVersion.h"
 #include "ZXAlgorithms.h"
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 std::vector<DataBlock> DataBlock::GetDataBlocks(const ByteArray& rawCodewords, const Version& version, ErrorCorrectionLevel ecLevel)
 {
@@ -74,4 +74,4 @@ std::vector<DataBlock> DataBlock::GetDataBlocks(const ByteArray& rawCodewords, c
 	return result;
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

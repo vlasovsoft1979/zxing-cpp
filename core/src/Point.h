@@ -13,11 +13,11 @@ namespace ZXing {
 template <typename T>
 struct PointT
 {
-	using value_t = T;
-	T x = 0, y = 0;
+	typedef T value_t;
+	T x, y;
 
-	constexpr PointT() = default;
-	constexpr PointT(T x, T y) : x(x), y(y) {}
+	PointT(): x(0), y(0) {}
+	PointT(T x, T y) : x(x), y(y) {}
 
 	template <typename U>
 	constexpr explicit PointT(const PointT<U>& p) : x(static_cast<T>(p.x)), y(static_cast<T>(p.y))
@@ -119,8 +119,8 @@ auto distance(PointT<T> a, PointT<T> b) -> decltype(length(a - b))
 	return length(a - b);
 }
 
-using PointI = PointT<int>;
-using PointF = PointT<double>;
+typedef PointT<int> PointI;
+typedef PointT<double> PointF;
 
 /// Calculate a floating point pixel coordinate representing the 'center' of the pixel.
 /// This is sort of the inverse operation of the PointI(PointF) conversion constructor.

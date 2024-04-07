@@ -23,7 +23,7 @@ class RegressionLine
 protected:
 	std::vector<PointF> _points;
 	PointF _directionInward;
-	PointF::value_t a = NAN, b = NAN, c = NAN;
+	PointF::value_t a, b, c;
 
 	friend PointF intersect(const RegressionLine& l1, const RegressionLine& l2);
 
@@ -56,14 +56,14 @@ protected:
 
 	template <typename T> bool evaluate(const std::vector<PointT<T>>& points) { return evaluate(&points.front(), &points.back() + 1); }
 
-	template <typename T> static auto distance(PointT<T> a, PointT<T> b) { return ZXing::distance(a, b); }
+	template <typename T> static T distance(PointT<T> a, PointT<T> b) { return ZXing::distance(a, b); }
 
 public:
-	RegressionLine() { _points.reserve(16); } // arbitrary but plausible start size (tiny performance improvement)
+	RegressionLine() : a(NAN), b(NAN), c(NAN) { _points.reserve(16); } // arbitrary but plausible start size (tiny performance improvement)
 
 	template<typename T> RegressionLine(PointT<T> a, PointT<T> b)
 	{
-		evaluate(std::vector{a, b});
+		evaluate(std::vector<PointT<T>>{a, b});
 	}
 
 	template<typename T> RegressionLine(const PointT<T>* b, const PointT<T>* e)
@@ -71,12 +71,13 @@ public:
 		evaluate(b, e);
 	}
 
-	const auto& points() const { return _points; }
+	const std::vector<PointF>& points() const { return _points; }
 	int length() const { return _points.size() >= 2 ? int(distance(_points.front(), _points.back())) : 0; }
 	bool isValid() const { return !std::isnan(a); }
 	PointF normal() const { return isValid() ? PointF(a, b) : _directionInward; }
-	auto signedDistance(PointF p) const { return dot(normal(), p) - c; }
-	template <typename T> auto distance(PointT<T> p) const { return std::abs(signedDistance(PointF(p))); }
+	double signedDistance(PointF p) const { return dot(normal(), p) - c; }
+	template <typename T> 
+    double distance(PointT<T> p) const { return std::abs(signedDistance(PointF(p))); }
 	PointF project(PointF p) const { return p - signedDistance(p) * normal(); }
 	PointF centroid() const { return Reduce(_points) / _points.size(); }
 
@@ -111,7 +112,7 @@ public:
 			while (true) {
 				auto old_points_size = points.size();
 				// remove points that are further 'inside' than maxSignedDist or further 'outside' than 2 x maxSignedDist
-				auto end = std::remove_if(points.begin(), points.end(), [this, maxSignedDist](auto p) {
+				auto end = std::remove_if(points.begin(), points.end(), [this, maxSignedDist](const PointF& p) {
 					auto sd = this->signedDistance(p);
 					return sd > maxSignedDist || sd < -2 * maxSignedDist;
 				});

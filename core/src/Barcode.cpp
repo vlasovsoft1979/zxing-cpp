@@ -56,8 +56,24 @@ Result::Result(DecoderResult&& decodeResult, DetectorResult&& detectorResult, Ba
 }
 
 Result::Result(DecoderResult&& decodeResult, Position&& position, BarcodeFormat format)
-	: Result(std::move(decodeResult), {{}, std::move(position)}, format)
-{}
+	: _content(std::move(decodeResult).content()),
+	  _error(std::move(decodeResult).error()),
+	  _position(std::move(position)),
+	  _sai(decodeResult.structuredAppend()),
+	  _format(format),
+	  _lineCount(decodeResult.lineCount()),
+	  _isMirrored(decodeResult.isMirrored()),
+	  _readerInit(decodeResult.readerInit())
+#ifdef ZXING_EXPERIMENTAL_API
+	  , _symbol(std::make_shared<BitMatrix>(std::move(detectorResult).bits()))
+#endif
+{
+	if (decodeResult.versionNumber())
+		snprintf(_version, 4, "%d", decodeResult.versionNumber());
+	snprintf(_ecLevel, 4, "%s", decodeResult.ecLevel().data());
+
+	// TODO: add type opaque and code specific 'extra data'? (see DecoderResult::extra())
+}
 
 bool Result::isValid() const
 {
@@ -225,8 +241,8 @@ Barcodes MergeStructuredAppendSequences(const Barcodes& barcodes)
 	}
 
 	Barcodes res;
-	for (auto& [id, seq] : sas) {
-		auto barcode = MergeStructuredAppendSequence(seq);
+	for (auto& sa : sas) {
+		auto barcode = MergeStructuredAppendSequence(sa.second);
 		if (barcode.isValid())
 			res.push_back(std::move(barcode));
 	}

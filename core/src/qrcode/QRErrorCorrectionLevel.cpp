@@ -8,7 +8,7 @@
 
 #include <cassert>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 const char* ToString(ErrorCorrectionLevel l)
 {
@@ -48,4 +48,4 @@ int BitsFromECLevel(ErrorCorrectionLevel l)
 	return BITS[(int)l];
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

@@ -9,7 +9,7 @@
 #include "BitMatrix.h"
 #include "Matrix.h"
 
-#include <algorithm>
+#include "tools/algorithm.hpp"
 #include <cstdint>
 #include <fstream>
 #include <memory>
@@ -45,7 +45,7 @@ bool HybridBinarizer::getPatternRow(int row, int rotation, PatternRow& res) cons
 #endif
 }
 
-using T_t = uint8_t;
+typedef uint8_t T_t;
 
 /**
 * Applies a single threshold to a block of pixels.

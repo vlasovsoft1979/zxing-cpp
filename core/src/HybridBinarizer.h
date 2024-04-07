@@ -31,10 +31,10 @@ class HybridBinarizer : public GlobalHistogramBinarizer
 {
 public:
 	explicit HybridBinarizer(const ImageView& iv);
-	~HybridBinarizer() override;
+	~HybridBinarizer();
 
-	bool getPatternRow(int row, int rotation, PatternRow &res) const override;
-	std::shared_ptr<const BitMatrix> getBlackMatrix() const override;
+	bool getPatternRow(int row, int rotation, PatternRow &res) const;
+	std::shared_ptr<const BitMatrix> getBlackMatrix() const;
 };
 
 } // ZXing

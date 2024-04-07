@@ -22,11 +22,11 @@ class DecoderResult
 {
 	Content _content;
 	std::string _ecLevel;
-	int _lineCount = 0;
-	int _versionNumber = 0;
+	int _lineCount;
+	int _versionNumber;
 	StructuredAppendInfo _structuredAppend;
-	bool _isMirrored = false;
-	bool _readerInit = false;
+	bool _isMirrored;
+	bool _readerInit;
 	Error _error;
 	std::shared_ptr<CustomData> _extra;
 
@@ -34,20 +34,20 @@ class DecoderResult
 	DecoderResult& operator=(const DecoderResult &) = delete;
 
 public:
-	DecoderResult() = default;
+	DecoderResult() : _lineCount(0), _versionNumber(0), _isMirrored(false), _readerInit(false) {}
 	DecoderResult(Error error) : _error(std::move(error)) {}
 	DecoderResult(Content&& bytes) : _content(std::move(bytes)) {}
 
-	DecoderResult(DecoderResult&&) noexcept = default;
-	DecoderResult& operator=(DecoderResult&&) noexcept = default;
+	DecoderResult(DecoderResult&&) = default;
+	DecoderResult& operator=(DecoderResult&&) = default;
 
 	bool isValid(bool includeErrors = false) const
 	{
 		return (!_content.bytes.empty() && !_error) || (includeErrors && !!_error);
 	}
 
-	const Content& content() const & { return _content; }
-	Content&& content() && { return std::move(_content); }
+	const Content& content() const { return _content; }
+	Content&& content() { return std::move(_content); }
 
 	// to keep the unit tests happy for now:
 	std::wstring text() const { return _content.utfW(); }
@@ -61,12 +61,11 @@ public:
 	// return statement, e.g.
 	//    return DecoderResult(bytes, text).setEcLevel(level);
 #define ZX_PROPERTY(TYPE, GETTER, SETTER) \
-	const TYPE& GETTER() const & { return _##GETTER; } \
-	TYPE&& GETTER() && { return std::move(_##GETTER); } \
-	void SETTER(const TYPE& v) & { _##GETTER = v; } \
-	void SETTER(TYPE&& v) & { _##GETTER = std::move(v); } \
-	DecoderResult&& SETTER(const TYPE& v) && { _##GETTER = v; return std::move(*this); } \
-	DecoderResult&& SETTER(TYPE&& v) && { _##GETTER = std::move(v); return std::move(*this); }
+	const TYPE& GETTER() const { return _##GETTER; } \
+	TYPE&& GETTER() { return std::move(_##GETTER); } \
+	DecoderResult&& SETTER(const TYPE& v) { _##GETTER = v; return std::move(*this); } \
+	DecoderResult&& SETTER(TYPE&& v) { _##GETTER = std::move(v); return std::move(*this); \
+    }
 
 	ZX_PROPERTY(std::string, ecLevel, setEcLevel)
 	ZX_PROPERTY(int, lineCount, setLineCount)

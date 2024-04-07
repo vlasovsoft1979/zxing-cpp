@@ -10,7 +10,7 @@
 #include "BarcodeFormat.h"
 #include "CharacterSet.h"
 
-#include <string_view>
+#include "tools/string_view.hpp"
 #include <utility>
 
 namespace ZXing {
@@ -59,18 +59,18 @@ class ReaderOptions
 	bool _returnCodabarStartEnd    : 1;
 	bool _returnErrors             : 1;
 	uint8_t _downscaleFactor       : 3;
-	EanAddOnSymbol _eanAddOnSymbol : 2;
-	Binarizer _binarizer           : 2;
-	TextMode _textMode             : 3;
-	CharacterSet _characterSet     : 6;
+	EanAddOnSymbol _eanAddOnSymbol;
+	Binarizer _binarizer;
+	TextMode _textMode;
+	CharacterSet _characterSet;
 #ifdef ZXING_EXPERIMENTAL_API
 	bool _tryDenoise               : 1;
 #endif
 
-	uint8_t _minLineCount        = 2;
-	uint8_t _maxNumberOfSymbols  = 0xff;
-	uint16_t _downscaleThreshold = 500;
-	BarcodeFormats _formats      = BarcodeFormat::None;
+	uint8_t _minLineCount;
+	uint8_t _maxNumberOfSymbols;
+	uint16_t _downscaleThreshold;
+	BarcodeFormats _formats;
 
 public:
 	// bitfields don't get default initialized to 0 before c++20
@@ -94,12 +94,16 @@ public:
 		  ,
 		  _tryDenoise(0)
 #endif
+	    , _minLineCount(2)
+	    , _maxNumberOfSymbols(0xff)
+	    , _downscaleThreshold(500)
+	    , _formats(BarcodeFormat::None)
 	{}
 
 #define ZX_PROPERTY(TYPE, GETTER, SETTER, ...) \
 	TYPE GETTER() const noexcept { return _##GETTER; } \
-	__VA_ARGS__ ReaderOptions& SETTER(TYPE v)& { return (void)(_##GETTER = std::move(v)), *this; } \
-	__VA_ARGS__ ReaderOptions&& SETTER(TYPE v)&& { return (void)(_##GETTER = std::move(v)), std::move(*this); }
+	__VA_ARGS__ ReaderOptions& SETTER(const TYPE& v) { return (void)(_##GETTER = v), *this; } \
+	__VA_ARGS__ ReaderOptions&& SETTER(TYPE&& v) { return (void)(_##GETTER = std::move(v)), std::move(*this); }
 
 	/// Specify a set of BarcodeFormats that should be searched for, the default is all supported formats.
 	ZX_PROPERTY(BarcodeFormats, formats, setFormats)
@@ -145,13 +149,13 @@ public:
 	ZX_PROPERTY(bool, tryCode39ExtendedMode, setTryCode39ExtendedMode)
 
 	/// Deprecated / does nothing. The Code39 symbol has a valid checksum iff symbologyIdentifier()[2] is an odd digit
-	ZX_PROPERTY(bool, validateCode39CheckSum, setValidateCode39CheckSum, [[deprecated]])
+	ZX_PROPERTY(bool, validateCode39CheckSum, setValidateCode39CheckSum, /*[[deprecated]]*/)
 
 	/// Deprecated / does nothing. The ITF symbol has a valid checksum iff symbologyIdentifier()[2] == '1'.
-	ZX_PROPERTY(bool, validateITFCheckSum, setValidateITFCheckSum, [[deprecated]])
+	ZX_PROPERTY(bool, validateITFCheckSum, setValidateITFCheckSum, /*[[deprecated]]*/)
 
 	/// Deprecated / does nothing. Codabar start/stop characters are always returned.
-	ZX_PROPERTY(bool, returnCodabarStartEnd, setReturnCodabarStartEnd, [[deprecated]])
+	ZX_PROPERTY(bool, returnCodabarStartEnd, setReturnCodabarStartEnd, /*[[deprecated]]*/)
 
 	/// If true, return the barcodes with errors as well (e.g. checksum errors, see @Barcode::error())
 	ZX_PROPERTY(bool, returnErrors, setReturnErrors)
@@ -164,8 +168,8 @@ public:
 
 	/// Specifies fallback character set to use instead of auto-detecting it (when applicable)
 	ZX_PROPERTY(CharacterSet, characterSet, setCharacterSet)
-	ReaderOptions& setCharacterSet(std::string_view v)& { return (void)(_characterSet = CharacterSetFromString(v)), *this; }
-	ReaderOptions&& setCharacterSet(std::string_view v) && { return (void)(_characterSet = CharacterSetFromString(v)), std::move(*this); }
+	ReaderOptions& setCharacterSet(const std::string_view& v) { return (void)(_characterSet = CharacterSetFromString(v)), *this; }
+	ReaderOptions&& setCharacterSet(std::string_view&& v) { return (void)(_characterSet = CharacterSetFromString(v)), std::move(*this); }
 
 #undef ZX_PROPERTY
 
@@ -173,7 +177,7 @@ public:
 };
 
 #ifndef HIDE_DECODE_HINTS_ALIAS
-using DecodeHints [[deprecated]] = ReaderOptions;
+typedef ReaderOptions DecodeHints;
 #endif
 
 } // ZXing

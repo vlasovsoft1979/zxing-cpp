@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <string>
-#include <string_view>
+#include "tools/string_view.hpp"
 #include <vector>
 
 namespace ZXing {

@@ -13,7 +13,7 @@
 
 #include <array>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 CodecMode CodecModeForBits(int bits, Type type)
 {
@@ -41,11 +41,11 @@ int CharacterCountBits(CodecMode mode, const Version& version)
 	int number = version.versionNumber();
 	if (version.isMicro()) {
 		switch (mode) {
-		case CodecMode::NUMERIC:      return std::array{3, 4, 5, 6}[number - 1];
-		case CodecMode::ALPHANUMERIC: return std::array{3, 4, 5}[number - 2];
-		case CodecMode::BYTE:         return std::array{4, 5}[number - 3];
-		case CodecMode::KANJI:        [[fallthrough]];
-		case CodecMode::HANZI:        return std::array{3, 4}[number - 3];
+		case CodecMode::NUMERIC:      return std::array<int, 4>{{3, 4, 5, 6}}[number - 1];
+		case CodecMode::ALPHANUMERIC: return std::array<int, 3>{{3, 4, 5}}[number - 2];
+		case CodecMode::BYTE:         return std::array<int, 2>{{4, 5}}[number - 3];
+		case CodecMode::KANJI:        // [[fallthrough]];
+		case CodecMode::HANZI:        return std::array<int, 2>{{3, 4}}[number - 3];
 		default: return 0;
 		}
 	}
@@ -73,11 +73,11 @@ int CharacterCountBits(CodecMode mode, const Version& version)
 		i = 2;
 
 	switch (mode) {
-	case CodecMode::NUMERIC:      return std::array{10, 12, 14}[i];
-	case CodecMode::ALPHANUMERIC: return std::array{9, 11, 13}[i];
-	case CodecMode::BYTE:         return std::array{8, 16, 16}[i];
-	case CodecMode::KANJI:        [[fallthrough]];
-	case CodecMode::HANZI:        return std::array{8, 10, 12}[i];
+	case CodecMode::NUMERIC:      return std::array<int, 3>{{10, 12, 14}}[i];
+	case CodecMode::ALPHANUMERIC: return std::array<int, 3>{{9, 11, 13}}[i];
+	case CodecMode::BYTE:         return std::array<int, 3>{{8, 16, 16}}[i];
+	case CodecMode::KANJI:        //[[fallthrough]];
+	case CodecMode::HANZI:        return std::array<int, 3>{{8, 10, 12}}[i];
 	default:                      return 0;
 	}
 }
@@ -92,4 +92,4 @@ int TerminatorBitsLength(const Version& version)
 	return version.isMicro() ? version.versionNumber() * 2 + 1 : 4 - version.isRMQR();
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

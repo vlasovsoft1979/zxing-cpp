@@ -25,10 +25,10 @@ class GlobalHistogramBinarizer : public BinaryBitmap
 {
 public:
 	explicit GlobalHistogramBinarizer(const ImageView& buffer);
-	~GlobalHistogramBinarizer() override;
+	~GlobalHistogramBinarizer();
 
-	bool getPatternRow(int row, int rotation, PatternRow &res) const override;
-	std::shared_ptr<const BitMatrix> getBlackMatrix() const override;
+	bool getPatternRow(int row, int rotation, PatternRow &res) const;
+	std::shared_ptr<const BitMatrix> getBlackMatrix() const;
 };
 
 } // ZXing

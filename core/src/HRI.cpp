@@ -11,7 +11,7 @@
 
 #include <cmath>
 #include <cstring>
-#include <string_view>
+#include "tools/string_view.hpp"
 
 namespace ZXing {
 
@@ -24,8 +24,7 @@ struct AiInfo
 	int fieldSize() const noexcept { return std::abs(_fieldSize); }
 	int aiSize() const
 	{
-		using namespace std::literals;
-		if ((aiPrefix[0] == '3' && Contains("1234569", aiPrefix[1])) || aiPrefix == "703"sv || aiPrefix == "723"sv)
+		if ((aiPrefix[0] == '3' && Contains("1234569", aiPrefix[1])) || aiPrefix == std::string_view("703") || aiPrefix == std::string_view("723"))
 			return 4;
 		else
 			return strlen(aiPrefix);

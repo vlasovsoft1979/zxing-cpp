@@ -10,11 +10,14 @@
 #include <cstdint>
 #include <cstring>
 #include <vector>
+#include "tools/type_traits.hpp"
 
+#if defined(__has_include) 
 #if __has_include(<bit>) && __cplusplus > 201703L // MSVC has the <bit> header but then warns about including it
 #include <bit>
 #if __cplusplus > 201703L && defined(__ANDROID__) // NDK 25.1.8937393 has the implementation but fails to advertise it
 #define __cpp_lib_bitops 201907L
+#endif
 #endif
 #endif
 
@@ -25,7 +28,7 @@
 #define ZX_HAS_MSC_BUILTINS
 #endif
 
-namespace ZXing::BitHacks {
+namespace ZXing { namespace BitHacks {
 
 /**
 * The code below is taken from https://graphics.stanford.edu/~seander/bithacks.html
@@ -35,13 +38,13 @@ namespace ZXing::BitHacks {
 /// <summary>
 /// Compute the number of zero bits on the left.
 /// </summary>
-template<typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
 inline int NumberOfLeadingZeros(T x)
 {
 #ifdef __cpp_lib_bitops
 	return std::countl_zero(static_cast<std::make_unsigned_t<T>>(x));
 #else
-	if constexpr (sizeof(x) <= 4) {
+	if (sizeof(x) <= 4) {
 		static_assert(sizeof(x) == 4, "NumberOfLeadingZeros not implemented for 8 and 16 bit ints.");
 		if (x == 0)
 			return 32;
@@ -67,7 +70,9 @@ inline int NumberOfLeadingZeros(T x)
 #ifdef ZX_HAS_GCC_BUILTINS
 		return __builtin_clzll(x);
 #else // including ZX_HAS_MSC_BUILTINS
-		int n = NumberOfLeadingZeros(static_cast<uint32_t>(x >> 32));
+		uint64_t y = 0;
+		y = y >> 32;
+		int n = NumberOfLeadingZeros(static_cast<uint32_t>(static_cast<uint64_t>(x) >> 32));
 		if (n == 32)
 			n += NumberOfLeadingZeros(static_cast<uint32_t>(x));
 		return n;
@@ -79,14 +84,13 @@ inline int NumberOfLeadingZeros(T x)
 /// <summary>
 /// Compute the number of zero bits on the right.
 /// </summary>
-template<typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
 inline int NumberOfTrailingZeros(T v)
 {
 #ifdef __cpp_lib_bitops
 	return std::countr_zero(static_cast<std::make_unsigned_t<T>>(v));
 #else
-	if constexpr (sizeof(v) <= 4) {
-		static_assert(sizeof(v) == 4, "NumberOfTrailingZeros not implemented for 8 and 16 bit ints.");
+	if (sizeof(v) <= 4) {
 #ifdef ZX_HAS_GCC_BUILTINS
 		return v == 0 ? 32 : __builtin_ctz(v);
 #elif defined(ZX_HAS_MSC_BUILTINS)
@@ -111,7 +115,7 @@ inline int NumberOfTrailingZeros(T v)
 #else // including ZX_HAS_MSC_BUILTINS
 		int n = NumberOfTrailingZeros(static_cast<uint32_t>(v));
 		if (n == 32)
-			n += NumberOfTrailingZeros(static_cast<uint32_t>(v >> 32));
+			n += NumberOfTrailingZeros(static_cast<uint32_t>(static_cast<uint64_t>(v) >> 32));
 		return n;
 #endif
 	}
@@ -196,10 +200,9 @@ void Reverse(std::vector<T>& bits, std::size_t padding)
 template <typename T>
 T LoadU(const void* ptr)
 {
-	static_assert(std::is_integral<T>::value, "T must be an integer");
 	T res;
 	memcpy(&res, ptr, sizeof(T));
 	return res;
 }
 
-} // namespace ZXing::BitHacks
+}} // namespace ZXing::BitHacks

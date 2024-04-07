@@ -18,19 +18,19 @@ namespace ZXing {
 
 // TODO: c++20 has char8_t
 #if __cplusplus <= 201703L
-using char8_t = uint8_t;
+typedef uint8_t char8_t;
 #endif
-using utf8_t = std::basic_string_view<char8_t>;
+typedef std::basic_string_view<char8_t> utf8_t;
 
-using state_t = uint8_t;
+typedef uint8_t state_t;
 constexpr state_t kAccepted = 0;
-constexpr state_t kRejected [[maybe_unused]] = 12;
+constexpr state_t kRejected /*[[maybe_unused]]*/ = 12;
 
 inline char32_t Utf8Decode(char8_t byte, state_t& state, char32_t& codep)
 {
 	// Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
 	// See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
-	static constexpr const state_t kUtf8Data[] = {
+	static constexpr state_t kUtf8Data[] = {
 		/* The first part of the table maps bytes to character classes that
 		 * reduce the size of the transition table and create bitmasks. */
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -78,7 +78,7 @@ static size_t Utf8CountCodePoints(utf8_t utf8)
 			++i;
 		} else {
 			switch (utf8[i] & 0xf0) {
-			case 0xc0: [[fallthrough]];
+			case 0xc0: //[[fallthrough]];
 			case 0xd0: i += 2; break;
 			case 0xe0: i += 3; break;
 			case 0xf0: i += 4; break;

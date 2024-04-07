@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 enum class Type;
 class Version;
@@ -56,4 +56,4 @@ int CodecModeBitsLength(const Version& version);
  */
 int TerminatorBitsLength(const Version& version);
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

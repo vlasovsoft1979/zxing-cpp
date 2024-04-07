@@ -17,7 +17,7 @@ namespace ZXing {
 
 class BitMatrix;
 
-using PatternRow = std::vector<uint16_t>;
+typedef std::vector<uint16_t> PatternRow;
 
 /**
 * This class is the core bitmap class used by ZXing to represent 1 bit data. Reader objects
@@ -27,8 +27,8 @@ class BinaryBitmap
 {
 	struct Cache;
 	std::unique_ptr<Cache> _cache;
-	bool _inverted = false;
-	bool _closed = false;
+	bool _inverted;
+	bool _closed;
 
 protected:
 	const ImageView _buffer;

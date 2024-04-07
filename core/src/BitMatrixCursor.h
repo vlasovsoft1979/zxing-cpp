@@ -27,7 +27,7 @@ inline Direction opposite(Direction dir) noexcept
 template<typename POINT>
 class BitMatrixCursor
 {
-	using this_t = BitMatrixCursor<POINT>;
+	typedef BitMatrixCursor<POINT> this_t;
 
 public:
 	const BitMatrix* img;
@@ -40,9 +40,9 @@ public:
 	class Value
 	{
 		enum { INVALID = -1, WHITE = 0, BLACK = 1 };
-		int v = INVALID;
+		int v;
 	public:
-		Value() = default;
+		Value() : v(INVALID) {}
 		Value(bool isBlack) : v(isBlack) {}
 		bool isValid() const noexcept { return v != INVALID; }
 		bool isWhite() const noexcept { return v == WHITE; }
@@ -187,16 +187,18 @@ public:
 	}
 };
 
-using BitMatrixCursorF = BitMatrixCursor<PointF>;
-using BitMatrixCursorI = BitMatrixCursor<PointI>;
+typedef BitMatrixCursor<PointF> BitMatrixCursorF;
+typedef BitMatrixCursor<PointI> BitMatrixCursorI;
 
 class FastEdgeToEdgeCounter
 {
-	const uint8_t* p = nullptr;
-	int stride = 0;
-	int stepsToBorder = 0;
+	const uint8_t* p;
+	int stride;
+	int stepsToBorder;
 
 public:
+    FastEdgeToEdgeCounter() : p(nullptr), stride(0), stepsToBorder(0) {}
+
 	FastEdgeToEdgeCounter(const BitMatrixCursorI& cur)
 	{
 		stride = cur.d.y * cur.img->width() + cur.d.x;

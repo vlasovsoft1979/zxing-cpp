@@ -23,10 +23,10 @@ GenericGFPoly::evaluateAt(int a) const
 		return constant();
 
 	if (a == 1) // return the sum of the coefficients
-		return Reduce(_coefficients, 0, [](auto s, auto c) { return s ^ c; });
+		return Reduce(_coefficients, 0, [](int s, int c) { return s ^ c; });
 
 	return std::accumulate(_coefficients.begin(), _coefficients.end(), 0,
-						   [this, a](auto s, auto c) { return _field->multiply(a, s) ^ c; });
+						   [this, a](int s, int c) { return _field->multiply(a, s) ^ c; });
 }
 
 GenericGFPoly& GenericGFPoly::addOrSubtract(GenericGFPoly& other)

@@ -17,14 +17,14 @@ struct StrideIter
 	Iterator pos;
 	int stride;
 
-	using iterator_category = std::random_access_iterator_tag;
-	using difference_type   = typename std::iterator_traits<Iterator>::difference_type;
-	using value_type        = typename std::iterator_traits<Iterator>::value_type;
-	using pointer           = Iterator;
-	using reference         = typename std::iterator_traits<Iterator>::reference;
+	typedef std::random_access_iterator_tag iterator_category;
+	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
+	typedef typename std::iterator_traits<Iterator>::value_type value_type;
+	typedef Iterator pointer;
+	typedef typename std::iterator_traits<Iterator>::reference reference;
 
-	auto operator*() const { return *pos; }
-	auto operator[](int i) const { return *(pos + i * stride); }
+	auto operator*() const -> decltype(*pos) { return *pos; }
+	auto operator[](int i) const -> decltype(*(pos + i * stride)) { return *(pos + i * stride); }
 	StrideIter<Iterator>& operator++() { return pos += stride, *this; }
 	StrideIter<Iterator> operator++(int) { auto temp = *this; ++*this; return temp; }
 	bool operator!=(const StrideIter<Iterator>& rhs) const { return pos != rhs.pos; }
@@ -33,8 +33,8 @@ struct StrideIter
 	int operator-(const StrideIter<Iterator>& rhs) const { return narrow_cast<int>((pos - rhs.pos) / stride); }
 };
 
-template <typename Iterator>
-StrideIter(const Iterator&, int) -> StrideIter<Iterator>;
+//template <typename Iterator>
+//StrideIter(const Iterator&, int) -> StrideIter<Iterator>;
 
 
 template <typename Iterator>
@@ -53,7 +53,7 @@ struct Range
 	int size() const { return narrow_cast<int>(end() - begin()); }
 };
 
-template <typename C>
-Range(const C&) -> Range<typename C::const_iterator>;
+//template <typename C>
+//Range(const C&) -> Range<typename C::const_iterator>;
 
 } // namespace ZXing

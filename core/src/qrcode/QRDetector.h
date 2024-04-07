@@ -24,8 +24,8 @@ struct FinderPatternSet
 	ConcentricPattern bl, tl, tr;
 };
 
-using FinderPatterns = std::vector<ConcentricPattern>;
-using FinderPatternSets = std::vector<FinderPatternSet>;
+typedef std::vector<ConcentricPattern> FinderPatterns;
+typedef std::vector<FinderPatternSet> FinderPatternSets;
 
 FinderPatterns FindFinderPatterns(const BitMatrix& image, bool tryHarder);
 FinderPatternSets GenerateFinderPatternSets(FinderPatterns& patterns);

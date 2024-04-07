@@ -28,8 +28,9 @@ namespace ZXing {
 class LumImage : public Image
 {
 public:
-	using Image::Image;
-
+    LumImage() = default;
+    LumImage(int w, int h) : Image(w, h, ImageFormat::Lum)
+    {}
 	uint8_t* data() { return const_cast<uint8_t*>(Image::data()); }
 };
 
@@ -131,10 +132,10 @@ ImageView SetupLumImageView(ImageView iv, LumImage& lum, const ReaderOptions& op
 std::unique_ptr<BinaryBitmap> CreateBitmap(ZXing::Binarizer binarizer, const ImageView& iv)
 {
 	switch (binarizer) {
-	case Binarizer::BoolCast: return std::make_unique<ThresholdBinarizer>(iv, 0);
-	case Binarizer::FixedThreshold: return std::make_unique<ThresholdBinarizer>(iv, 127);
-	case Binarizer::GlobalHistogram: return std::make_unique<GlobalHistogramBinarizer>(iv);
-	case Binarizer::LocalAverage: return std::make_unique<HybridBinarizer>(iv);
+	case Binarizer::BoolCast: return std::unique_ptr<BinaryBitmap>(new ThresholdBinarizer(iv, 0));
+	case Binarizer::FixedThreshold: return std::unique_ptr<BinaryBitmap>(new ThresholdBinarizer(iv, 127));;
+	case Binarizer::GlobalHistogram: return std::unique_ptr<GlobalHistogramBinarizer>(new GlobalHistogramBinarizer(iv));
+	case Binarizer::LocalAverage: return std::unique_ptr<HybridBinarizer>(new HybridBinarizer(iv));
 	}
 	return {}; // silence gcc warning
 }

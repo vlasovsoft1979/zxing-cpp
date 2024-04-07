@@ -34,10 +34,10 @@ class DetectorResult;
 class WriterOptions;
 class Result; // TODO: 3.0 replace deprected symbol name
 
-using Position = QuadrilateralI;
-using Barcode = Result;
-using Barcodes = std::vector<Barcode>;
-using Results = std::vector<Result>;
+typedef QuadrilateralI Position;
+typedef Result Barcode;
+typedef std::vector<Barcode> Barcodes;
+typedef std::vector<Result> Results;
 
 /**
  * @brief The Barcode class encapsulates the result of decoding a barcode within an image.
@@ -53,15 +53,24 @@ class Result
 	friend void IncrementLineCount(Barcode&);
 
 public:
-	Result() = default;
+	Result()
+        : _format(BarcodeFormat::None)
+	    , _ecLevel{0}
+	    , _version{0}
+	    , _lineCount{0}
+	    , _isMirrored(false)
+	    , _isInverted(false)
+	    , _readerInit(false)
+    {}
+
 
 	// linear symbology convenience constructor
-	Result(const std::string& text, int y, int xStart, int xStop, BarcodeFormat format, SymbologyIdentifier si, Error error = {},
+	Result(const std::string& text, int y, int xStart, int xStop, BarcodeFormat format, SymbologyIdentifier si, Error error = Error{},
 		   bool readerInit = false);
 
 	Result(DecoderResult&& decodeResult, DetectorResult&& detectorResult, BarcodeFormat format);
 
-	[[deprecated]] Result(DecoderResult&& decodeResult, Position&& position, BarcodeFormat format);
+	/*[[deprecated]]*/ Result(DecoderResult&& decodeResult, Position&& position, BarcodeFormat format);
 
 	bool isValid() const;
 
@@ -183,13 +192,13 @@ private:
 	Position _position;
 	ReaderOptions _readerOpts; // TODO: 3.0 switch order to prevent 4 padding bytes
 	StructuredAppendInfo _sai;
-	BarcodeFormat _format = BarcodeFormat::None;
-	char _ecLevel[4] = {};
-	char _version[4] = {};
-	int _lineCount = 0;
-	bool _isMirrored = false;
-	bool _isInverted = false;
-	bool _readerInit = false;
+	BarcodeFormat _format;
+	char _ecLevel[4];
+	char _version[4];
+	int _lineCount;
+	bool _isMirrored;
+	bool _isInverted;
+	bool _readerInit;
 #ifdef ZXING_EXPERIMENTAL_API
 	std::shared_ptr<BitMatrix> _symbol;
 	std::shared_ptr<zint_symbol> _zint;

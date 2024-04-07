@@ -8,15 +8,14 @@
 
 #include "Reader.h"
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 class Reader : public ZXing::Reader
 {
 public:
-	using ZXing::Reader::Reader;
-
-	Barcode decode(const BinaryBitmap& image) const override;
-	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const override;
+	explicit Reader(const ReaderOptions& opts, bool supportsInversion = false) : ZXing::Reader(opts, supportsInversion) {}
+	Barcode decode(const BinaryBitmap& image) const;
+	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const;
 };
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

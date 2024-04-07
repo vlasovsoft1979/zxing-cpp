@@ -25,9 +25,10 @@ class ByteMatrix;
  */
 class BitMatrix
 {
-	int _width = 0;
-	int _height = 0;
-	using data_t = uint8_t;
+	int _width;
+	int _height;
+
+	typedef uint8_t data_t;
 
 	std::vector<data_t> _bits;
 	// There is nothing wrong to support this but disable to make it explicit since we may copy something very big here.
@@ -54,7 +55,7 @@ public:
 	static constexpr data_t UNSET_V = 0;
 	static_assert(bool(SET_V) && !bool(UNSET_V), "SET_V needs to evaluate to true, UNSET_V to false, see iterator usage");
 
-	BitMatrix() = default;
+	BitMatrix() : _width(0), _height(0) {}
 
 #if defined(__llvm__) || (defined(__GNUC__) && (__GNUC__ > 7))
 	__attribute__((no_sanitize("signed-integer-overflow")))
@@ -65,10 +66,10 @@ public:
 			throw std::invalid_argument("Invalid size: width * height is too big");
 	}
 
-	explicit BitMatrix(int dimension) : BitMatrix(dimension, dimension) {} // Construct a square matrix.
+	explicit BitMatrix(int dimension) : _width(dimension), _height(dimension) {} // Construct a square matrix.
 
-	BitMatrix(BitMatrix&& other) noexcept = default;
-	BitMatrix& operator=(BitMatrix&& other) noexcept = default;
+	BitMatrix(BitMatrix&& other) = default;
+	BitMatrix& operator=(BitMatrix&& other) = default;
 
 	BitMatrix copy() const { return *this; }
 
@@ -172,7 +173,7 @@ BitMatrix Inflate(BitMatrix&& input, int width, int height, int quietZone);
 BitMatrix Deflate(const BitMatrix& input, int width, int height, float top, float left, float subSampling);
 
 template<typename T>
-BitMatrix ToBitMatrix(const Matrix<T>& in, T trueValue = {true})
+BitMatrix ToBitMatrix(const Matrix<T>& in, T trueValue = T{true})
 {
 	BitMatrix out(in.width(), in.height());
 	for (int y = 0; y < in.height(); ++y)

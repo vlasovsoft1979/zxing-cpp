@@ -11,7 +11,7 @@
 
 #include <cstdint>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 static constexpr uint32_t FORMAT_INFO_MASK_MODEL2 = 0x5412;
 static constexpr uint32_t FORMAT_INFO_MASK_MODEL1 = 0x2825;
@@ -22,17 +22,18 @@ static constexpr uint32_t FORMAT_INFO_MASK_RMQR_SUB = 0x20A7B; // Finder sub pat
 class FormatInformation
 {
 public:
-	uint32_t mask = 0;
-	uint8_t data = 255;
-	uint8_t hammingDistance = 255;
-	uint8_t bitsIndex = 255;
+	uint32_t mask;
+	uint8_t data;
+	uint8_t hammingDistance;
+	uint8_t bitsIndex;
+	bool isMirrored;
+	uint8_t dataMask;
+	uint8_t microVersion;
+	ErrorCorrectionLevel ecLevel;
 
-	bool isMirrored = false;
-	uint8_t dataMask = 0;
-	uint8_t microVersion = 0;
-	ErrorCorrectionLevel ecLevel = ErrorCorrectionLevel::Invalid;
-
-	FormatInformation() = default;
+	FormatInformation() : mask(0), data(255), hammingDistance(255), bitsIndex(255),
+        isMirrored(false), dataMask(0), microVersion(0), ecLevel(ErrorCorrectionLevel::Invalid)
+    {}
 
 	static FormatInformation DecodeQR(uint32_t formatInfoBits1, uint32_t formatInfoBits2);
 	static FormatInformation DecodeMQR(uint32_t formatInfoBits);
@@ -46,7 +47,7 @@ public:
 		switch (mask) {
 		case FORMAT_INFO_MASK_MODEL1: return Type::Model1;
 		case FORMAT_INFO_MASK_MICRO: return Type::Micro;
-		case FORMAT_INFO_MASK_RMQR: [[fallthrough]];
+		case FORMAT_INFO_MASK_RMQR: //[[fallthrough]];
 		case FORMAT_INFO_MASK_RMQR_SUB: return Type::rMQR;
 		default: return Type::Model2;
 		}
@@ -58,4 +59,4 @@ public:
 	}
 };
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

@@ -52,7 +52,7 @@ class GenericGFPoly
 public:
 	// Build a invalid object, so that this can be used in container or return by reference,
 	// any access to invalid object is undefined behavior.
-	GenericGFPoly() = default;
+	GenericGFPoly() : _field(nullptr) {}
 
 	/**
 	* @param field the {@link GenericGF} instance representing the field to use
@@ -66,10 +66,15 @@ public:
 		_coefficients.swap(coefficients); // _coefficients = coefficients
 		normalize();
 	}
-	GenericGFPoly(const GenericGF& field, const std::vector<int>& coefficients) : GenericGFPoly(field, std::vector<int>(coefficients)) {}
+	GenericGFPoly(const GenericGF& field, const std::vector<int>& coefficients) : _field(&field)
+    {
+		assert(!coefficients.empty());
+		static_cast<std::vector<int>&>(_coefficients) = coefficients;
+		normalize();
+    }
 
-	GenericGFPoly& operator=(GenericGFPoly&& other) noexcept = default;
-	GenericGFPoly(GenericGFPoly&& other) noexcept = default;
+	GenericGFPoly& operator=(GenericGFPoly&& other) = default;
+	GenericGFPoly(GenericGFPoly&& other) = default;
 
 	GenericGFPoly& operator=(const GenericGFPoly& other) {
 		assert(_field == other._field);
@@ -89,7 +94,7 @@ public:
 		return *this;
 	}
 	const GenericGF& field() const noexcept { return *_field; }
-	const auto& coefficients() const noexcept { return _coefficients; }
+	const Coefficients& coefficients() const noexcept { return _coefficients; }
 
 	/**
 	* @return degree of this polynomial
@@ -146,7 +151,7 @@ public:
 private:
 	void normalize();
 
-	const GenericGF* _field = nullptr;
+	const GenericGF* _field;
 	Coefficients _coefficients, _cache; // _cache is used for malloc caching
 };
 

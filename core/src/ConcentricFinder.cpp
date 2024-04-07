@@ -27,7 +27,7 @@ std::optional<PointF> AverageEdgePixels(BitMatrixCursorI cur, int range, int num
 std::optional<PointF> CenterOfDoubleCross(const BitMatrix& image, PointI center, int range, int numOfEdges)
 {
 	PointF sum = {};
-	for (auto d : {PointI{0, 1}, {1, 0}, {1, 1}, {1, -1}}) {
+	for (auto d : {PointI{0, 1}, PointI{1, 0}, PointI{1, 1}, PointI{1, -1}}) {
 		auto avr1 = AverageEdgePixels({image, center,  d}, range, numOfEdges);
 		auto avr2 = AverageEdgePixels({image, center, -d}, range, numOfEdges);
 		if (!avr1 || !avr2)
@@ -155,7 +155,7 @@ static std::vector<PointF> CollectRingPoints(const BitMatrix& image, PointF cent
 
 static std::optional<QuadrilateralF> FitQadrilateralToPoints(PointF center, std::vector<PointF>& points)
 {
-	auto dist2Center = [c = center](auto a, auto b) { return distance(a, c) < distance(b, c); };
+	auto dist2Center = [c = center](PointF a, PointF b) { return distance(a, c) < distance(b, c); };
 	// rotate points such that the first one is the furthest away from the center (hence, a corner)
 	std::rotate(points.begin(), std::max_element(points.begin(), points.end(), dist2Center), points.end());
 
@@ -165,14 +165,14 @@ static std::optional<QuadrilateralF> FitQadrilateralToPoints(PointF center, std:
 	corners[2] = std::max_element(&points[Size(points) * 3 / 8], &points[Size(points) * 5 / 8], dist2Center);
 
 	// find the two in between corners by looking for the points farthest from the long diagonal
-	auto dist2Diagonal = [l = RegressionLine(*corners[0], *corners[2])](auto a, auto b) { return l.distance(a) < l.distance(b); };
+	auto dist2Diagonal = [l = RegressionLine(*corners[0], *corners[2])](PointF a, PointF b) { return l.distance(a) < l.distance(b); };
 	corners[1] = std::max_element(&points[Size(points) * 1 / 8], &points[Size(points) * 3 / 8], dist2Diagonal);
 	corners[3] = std::max_element(&points[Size(points) * 5 / 8], &points[Size(points) * 7 / 8], dist2Diagonal);
 
-	std::array lines{RegressionLine{corners[0] + 1, corners[1]}, RegressionLine{corners[1] + 1, corners[2]},
+	std::array<RegressionLine, 4> lines{RegressionLine{corners[0] + 1, corners[1]}, RegressionLine{corners[1] + 1, corners[2]},
 					 RegressionLine{corners[2] + 1, corners[3]}, RegressionLine{corners[3] + 1, &points.back() + 1}};
 
-	if (std::any_of(lines.begin(), lines.end(), [](auto line) { return !line.isValid(); }))
+	if (std::any_of(lines.begin(), lines.end(), [](const RegressionLine& line) { return !line.isValid(); }))
 		return {};
 
 	std::array<const PointF*, 4> beg = {corners[0] + 1, corners[1] + 1, corners[2] + 1, corners[3] + 1};
@@ -247,16 +247,19 @@ std::optional<QuadrilateralF> FindConcentricPatternCorners(const BitMatrix& imag
 std::optional<PointF> FinetuneConcentricPatternCenter(const BitMatrix& image, PointF center, int range, int finderPatternSize)
 {
 	// make sure we have at least one path of white around the center
-	if (auto res1 = CenterOfRing(image, PointI(center), range, 1); res1 && image.get(*res1)) {
+	auto res1 = CenterOfRing(image, PointI(center), range, 1);
+	if (res1 && image.get(*res1)) {
 		// and then either at least one more ring around that
-		if (auto res2 = CenterOfRings(image, *res1, range, finderPatternSize / 2); res2 && image.get(*res2))
+		auto res2 = CenterOfRings(image, *res1, range, finderPatternSize / 2);
+		if (res2 && image.get(*res2))
 			return res2;
 		// or the center can be approximated by a square
 		if (FitSquareToPoints(image, *res1, range, 1, false))
 			return res1;
 		// TODO: this is currently only keeping #258 alive, evaluate if still worth it
-		if (auto res2 = CenterOfDoubleCross(image, PointI(*res1), range, finderPatternSize / 2 + 1); res2 && image.get(*res2))
-			return res2;
+		auto res3 = CenterOfDoubleCross(image, PointI(*res1), range, finderPatternSize / 2 + 1);
+		if (res3 && image.get(*res3))
+			return res3;
 	}
 	return {};
 }

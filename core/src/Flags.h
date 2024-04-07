@@ -18,16 +18,16 @@ class Flags
 {
 	static_assert(std::is_enum<Enum>::value, "Flags is only usable on enumeration types.");
 
-	using Int = typename std::underlying_type<Enum>::type;
-	Int i = 0;
+	typedef int Int;
+	Int i;
 
 	constexpr inline Flags(Int other) : i(other) {}
 	constexpr static inline unsigned highestBitSet(Int x) noexcept { return x < 2 ? x : 1 + highestBitSet(x >> 1); }
 
 public:
-	using enum_type = Enum;
+	typedef Enum enum_type;
 
-	constexpr inline Flags() noexcept = default;
+    constexpr inline Flags() : i(0) {}
 	constexpr inline Flags(Enum flag) noexcept : i(Int(flag)) {}
 
 //	constexpr inline Flags(std::initializer_list<Enum> flags) noexcept
@@ -37,15 +37,16 @@ public:
 	class iterator
 	{
 		friend class Flags;
-		const Int _flags = 0;
-		int _pos = 0;
+		const Int _flags;
+		int _pos;
+        iterator() : _flags(0), _pos(0) {}
 		iterator(Int i, int p) : _flags(i), _pos(p) {}
 	public:
-		using iterator_category = std::input_iterator_tag;
-		using value_type = Enum;
-		using difference_type = std::ptrdiff_t;
-		using pointer = Enum*;
-		using reference = Enum&;
+		typedef std::input_iterator_tag iterator_category;
+		typedef Enum value_type;
+		typedef std::ptrdiff_t difference_type;
+		typedef Enum* pointer;
+		typedef Enum& reference;
 
 		Enum operator*() const noexcept { return Enum(1 << _pos); }
 
@@ -110,7 +111,7 @@ private:
 };
 
 #define ZX_DECLARE_FLAGS(FLAGS, ENUM) \
-	using FLAGS = Flags<ENUM>; \
+	typedef Flags<ENUM> FLAGS; \
 	constexpr inline FLAGS operator|(FLAGS::enum_type e1, FLAGS::enum_type e2) noexcept { return FLAGS(e1) | e2; } \
 	constexpr inline FLAGS operator|(FLAGS::enum_type e, FLAGS f) noexcept { return f | e; } \
 	constexpr inline bool operator==(FLAGS::enum_type e, FLAGS f) noexcept { return FLAGS(e) == f; } \

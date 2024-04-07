@@ -14,7 +14,7 @@
 #include <cassert>
 #include <cstdint>
 #include <stdexcept>
-#include <type_traits>
+#include "tools/type_traits.hpp"
 #include <vector>
 
 namespace ZXing {
@@ -37,14 +37,14 @@ class BitArray
 
 public:
 
-	using Iterator = std::vector<uint8_t>::const_iterator;
+	typedef std::vector<uint8_t>::const_iterator Iterator;
 
 	BitArray() = default;
 
 	explicit BitArray(int size) : _bits(size, 0) {}
 
-	BitArray(BitArray&& other) noexcept = default;
-	BitArray& operator=(BitArray&& other) noexcept = default;
+	BitArray(BitArray&& other) = default;
+	BitArray& operator=(BitArray&& other) = default;
 
 	BitArray copy() const { return *this; }
 
@@ -95,19 +95,19 @@ public:
 	*/
 	ByteArray toBytes(int bitOffset = 0, int numBytes = -1) const;
 
-	using Range = ZXing::Range<Iterator>;
+	typedef ZXing::Range<Iterator> Range;
 	Range range() const { return {begin(), end()}; }
 
 	friend bool operator==(const BitArray& a, const BitArray& b) { return a._bits == b._bits; }
 };
 
-template<typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
 T& AppendBit(T& val, bool bit)
 {
 	return (val <<= 1) |= static_cast<T>(bit);
 }
 
-template <typename ARRAY, typename = std::enable_if_t<std::is_integral_v<typename ARRAY::value_type>>>
+template <typename ARRAY, typename = typename stdx::enable_if<ARRAY, stdx::is_integral<typename ARRAY::value_type>::value>::value>
 int ToInt(const ARRAY& a)
 {
 	assert(Reduce(a) <= 32);
@@ -118,7 +118,7 @@ int ToInt(const ARRAY& a)
 	return pattern;
 }
 
-template <typename T = int, typename = std::enable_if_t<std::is_integral_v<T>>>
+template <typename T = int, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
 T ToInt(const BitArray& bits, int pos = 0, int count = 8 * sizeof(T))
 {
 	assert(0 <= count && count <= 8 * (int)sizeof(T));
@@ -133,7 +133,7 @@ T ToInt(const BitArray& bits, int pos = 0, int count = 8 * sizeof(T))
 	return res;
 }
 
-template <typename T = int, typename = std::enable_if_t<std::is_integral_v<T>>>
+template <typename T = int, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
 std::vector<T> ToInts(const BitArray& bits, int wordSize, int totalWords, int offset = 0)
 {
 	assert(totalWords >= bits.size() / wordSize);

@@ -14,12 +14,12 @@ namespace ZXing {
 
 class ThresholdBinarizer : public BinaryBitmap
 {
-	const uint8_t _threshold = 0;
+	const uint8_t _threshold;
 
 public:
 	ThresholdBinarizer(const ImageView& buffer, uint8_t threshold = 128) : BinaryBitmap(buffer), _threshold(threshold) {}
 
-	bool getPatternRow(int row, int rotation, PatternRow& res) const override
+	bool getPatternRow(int row, int rotation, PatternRow& res) const
 	{
 		auto buffer = _buffer.rotated(rotation);
 
@@ -49,7 +49,7 @@ public:
 		return true;
 	}
 
-	std::shared_ptr<const BitMatrix> getBlackMatrix() const override
+	std::shared_ptr<const BitMatrix> getBlackMatrix() const
 	{
 		return std::make_shared<const BitMatrix>(binarize(_threshold));
 	}

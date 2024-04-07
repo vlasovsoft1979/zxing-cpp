@@ -18,7 +18,7 @@ namespace ZXing {
  * @param options  optional ReaderOptions to parameterize / speed up detection
  * @return #Barcode structure
  */
-Barcode ReadBarcode(const ImageView& image, const ReaderOptions& options = {});
+Barcode ReadBarcode(const ImageView& image, const ReaderOptions& options = ReaderOptions{});
 
 /**
  * Read barcodes from an ImageView
@@ -27,7 +27,7 @@ Barcode ReadBarcode(const ImageView& image, const ReaderOptions& options = {});
  * @param options  optional ReaderOptions to parameterize / speed up detection
  * @return #Barcodes  list of barcodes found, may be empty
  */
-Barcodes ReadBarcodes(const ImageView& image, const ReaderOptions& options = {});
+Barcodes ReadBarcodes(const ImageView& image, const ReaderOptions& options = ReaderOptions{});
 
 } // ZXing
 

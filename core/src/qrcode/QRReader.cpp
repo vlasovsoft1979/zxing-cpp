@@ -19,7 +19,7 @@
 
 #include <utility>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 Barcode Reader::decode(const BinaryBitmap& image) const
 {
@@ -51,7 +51,7 @@ Barcode Reader::decode(const BinaryBitmap& image) const
 	return Barcode(std::move(decoderResult), std::move(detectorResult), format);
 }
 
-void logFPSet(const FinderPatternSet& fps [[maybe_unused]])
+void logFPSet(const FinderPatternSet& fps /*[[maybe_unused]]*/)
 {
 #ifdef PRINT_DEBUG
 	auto drawLine = [](PointF a, PointF b) {
@@ -151,4 +151,4 @@ Barcodes Reader::decode(const BinaryBitmap& image, int maxSymbols) const
 	return res;
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

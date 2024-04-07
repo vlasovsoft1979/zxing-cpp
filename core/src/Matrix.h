@@ -20,11 +20,11 @@ template <class T>
 class Matrix
 {
 public:
-	using value_t = T;
+	typedef T value_t;
 
 private:
-	int _width = 0;
-	int _height = 0;
+	int _width;
+	int _height;
 	std::vector<value_t> _data;
 
 	// Nothing wrong to support it, just to make it explicit, instead of by mistake.
@@ -33,18 +33,18 @@ private:
 	Matrix& operator=(const Matrix &) = delete;
 
 public:
-	Matrix() = default;
+	Matrix() : _width(0), _height(0) {}
 
 #if defined(__llvm__) || (defined(__GNUC__) && (__GNUC__ > 7))
 	__attribute__((no_sanitize("signed-integer-overflow")))
 #endif
-	Matrix(int width, int height, value_t val = {}) : _width(width), _height(height), _data(_width * _height, val) {
+	Matrix(int width, int height, value_t val = value_t()) : _width(width), _height(height), _data(_width * _height, val) {
 		if (width != 0 && Size(_data) / width != height)
 			throw std::invalid_argument("Invalid size: width * height is too big");
 	}
 
-	Matrix(Matrix&&) noexcept = default;
-	Matrix& operator=(Matrix&&) noexcept = default;
+	Matrix(Matrix&&) = default;
+	Matrix& operator=(Matrix&&) = default;
 
 	Matrix copy() const {
 		return *this;
@@ -110,7 +110,7 @@ public:
 		return _data.data() + _width * _height;
 	}
 
-	void clear(value_t value = {}) {
+	void clear(value_t value = value_t()) {
 		std::fill(_data.begin(), _data.end(), value);
 	}
 };
