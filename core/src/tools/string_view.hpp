@@ -43,6 +43,7 @@ public:
     {}
 
     size_type size() const { return len_; }
+	size_type length() const { return len_; }
     const_pointer data() const { return data_; }
     bool empty() const { return len_ == 0; }
 
@@ -127,6 +128,11 @@ public:
         if (comparison != 0) return comparison;
         if (len_ == s.len_) return 0;
         return len_ < s.len_ ? -1 : 1;
+    }
+
+    int compare( size_type pos1, size_type count1, basic_string_view v ) const
+    {
+        return substr(pos1, count1).compare(v);
     }
 
 private:

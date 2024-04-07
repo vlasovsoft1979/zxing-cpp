@@ -14,7 +14,7 @@
 #include <sstream>
 #include <string>
 
-namespace ZXing::GTIN {
+namespace ZXing { namespace GTIN {
 
 struct CountryId
 {
@@ -205,7 +205,8 @@ std::string EanAddOn(const Barcode& barcode)
 		return {};
 	auto txt = barcode.bytes().asString();
 	auto pos = txt.find(' ');
-	return pos != std::string::npos ? std::string(txt.substr(pos + 1)) : std::string();
+	auto sub = 	txt.substr(pos + 1);
+	return pos != std::string::npos ? std::string(sub.data(), sub.size()) : std::string();
 }
 
 std::string IssueNr(const std::string& ean2AddOn)
@@ -223,7 +224,7 @@ std::string Price(const std::string& ean5AddOn)
 
 	std::string currency;
 	switch (ean5AddOn.front()) {
-	case '0': [[fallthrough]];
+	case '0': //[[fallthrough]];
 	case '1': currency = "GBP £"; break; // UK
 	case '3': currency = "AUD $"; break; // AUS
 	case '4': currency = "NZD $"; break; // NZ
@@ -250,4 +251,4 @@ std::string Price(const std::string& ean5AddOn)
 	return buf.str();
 }
 
-} // namespace ZXing::GTIN
+}} // namespace ZXing::GTIN

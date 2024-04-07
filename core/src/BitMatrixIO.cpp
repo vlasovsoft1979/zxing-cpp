@@ -33,7 +33,7 @@ std::string ToString(const BitMatrix& matrix, char one, char zero, bool addSpace
 
 std::string ToString(const BitMatrix& matrix, bool inverted)
 {
-	constexpr auto map = std::array{" ", "▀", "▄", "█"};
+	const auto map = std::array<std::string, 4>{{" ", "▀", "▄", "█"}};
 	std::string res;
 
 	for (int y = 0; y < matrix.height(); y += 2) {

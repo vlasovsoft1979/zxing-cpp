@@ -8,7 +8,7 @@
 
 #include "ODRowReader.h"
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 class Code39Reader : public RowReader
 {
@@ -18,9 +18,7 @@ public:
 	* or optionally attempt to decode "extended Code 39" sequences that are used to encode
 	* the full ASCII character set.
 	*/
-	using RowReader::RowReader;
-
-	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const override;
+	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const;
 };
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

@@ -59,7 +59,7 @@ public:
 
 	struct DecodingState
 	{
-		virtual ~DecodingState() = default;
+		virtual ~DecodingState();
 	};
 
 	virtual ~RowReader() {}

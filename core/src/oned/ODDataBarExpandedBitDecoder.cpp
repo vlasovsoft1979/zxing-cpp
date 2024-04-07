@@ -11,7 +11,7 @@
 #include "Error.h"
 #include "GTIN.h"
 
-namespace ZXing::OneD::DataBar {
+namespace ZXing { namespace OneD { namespace DataBar {
 
 constexpr char GS = 29; // FNC1
 
@@ -245,4 +245,4 @@ std::string DecodeExpandedBits(const BitArray& _bits)
 	return {};
 }
 
-} // namespace ZXing::OneD::DataBar
+}}} // namespace ZXing::OneD::DataBar

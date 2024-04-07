@@ -6,7 +6,7 @@
 
 #include "ODCode128Patterns.h"
 
-namespace ZXing::OneD::Code128 {
+namespace ZXing { namespace OneD { namespace Code128 {
 
 const std::array<std::array<int, 6>, 107> CODE_PATTERNS = { {
 	{ 2, 1, 2, 2, 2, 2 }, // 0
@@ -118,4 +118,4 @@ const std::array<std::array<int, 6>, 107> CODE_PATTERNS = { {
 	{ 2, 3, 3, 1, 1, 1 }  // STOP_CODE followed by 2-wide termination bar
 } };
 
-} // namespace ZXing::OneD::Code128
+}}} // namespace ZXing::OneD::Code128

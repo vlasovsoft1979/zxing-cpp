@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-namespace ZXing::OneD::DataBar {
+namespace ZXing { namespace OneD { namespace DataBar {
 
 static int combins(int n, int r)
 {
@@ -166,4 +166,4 @@ int EstimateLineCount(const Pair& first, const Pair& last)
 	return std::min(first.count, last.count) - 1 + IsStacked(first, last);
 }
 
-} // namespace ZXing::OneD::DataBar
+}}} // namespace ZXing::OneD::DataBar

@@ -12,7 +12,7 @@
 #include <array>
 #include <cmath>
 
-namespace ZXing::OneD::DataBar {
+namespace ZXing { namespace OneD { namespace DataBar {
 
 inline bool IsFinder(int a, int b, int c, int d, int e)
 {
@@ -131,4 +131,4 @@ int GetValue(const Array4I& widths, int maxWidth, bool noNarrow);
 Position EstimatePosition(const Pair& first, const Pair& last);
 int EstimateLineCount(const Pair& first, const Pair& last);
 
-} // namespace ZXing::OneD::DataBar
+}}} // namespace ZXing::OneD::DataBar

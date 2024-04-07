@@ -13,7 +13,7 @@
 
 #include <string>
 
-namespace ZXing::GTIN {
+namespace ZXing { namespace GTIN {
 
 template <typename T>
 T ComputeCheckDigit(const std::basic_string<T>& digits, bool skipTail = false)
@@ -49,4 +49,4 @@ std::string EanAddOn(const Barcode& barcode);
 std::string IssueNr(const std::string& ean2AddOn);
 std::string Price(const std::string& ean5AddOn);
 
-} // namespace ZXing::GTIN
+}} // namespace ZXing::GTIN

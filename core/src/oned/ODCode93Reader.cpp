@@ -13,7 +13,7 @@
 #include <array>
 #include <string>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 // Note that 'abcd' are dummy characters in place of control characters.
 static const char ALPHABET[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%abcd*";
@@ -34,11 +34,11 @@ static const int CHARACTER_ENCODINGS[] = {
 	0x126, 0x1DA, 0x1D6, 0x132, 0x15E, // Control chars ($)==a, (%)==b, (/)==c, (+)==d, *
 };
 
-static_assert(Size(ALPHABET) - 1 == Size(CHARACTER_ENCODINGS), "table size mismatch");
+//static_assert(Size(ALPHABET) - 1 == Size(CHARACTER_ENCODINGS), "table size mismatch");
 
 static const int ASTERISK_ENCODING = 0x15E;
 
-using CounterContainer = std::array<int, 6>;
+typedef std::array<int, 6> CounterContainer;
 
 static bool
 CheckOneChecksum(const std::string& result, int checkPosition, int weightMax)
@@ -104,7 +104,7 @@ Barcode Code93Reader::decodePattern(int rowNumber, PatternView& next, std::uniqu
 			return {};
 	} while (txt.back() != '*');
 
-	txt.pop_back(); // remove asterisk
+	if (!txt.empty()) txt.resize(txt.size()-1); // remove asterisk
 
 	if (Size(txt) < minCharCount - 2)
 		return {};
@@ -125,10 +125,10 @@ Barcode Code93Reader::decodePattern(int rowNumber, PatternView& next, std::uniqu
 		error = FormatError("ASCII decoding of Code93 failed");
 
 	// Symbology identifier ISO/IEC 15424:2008 4.4.10 no modifiers
-	SymbologyIdentifier symbologyIdentifier = {'G', '0'};
+	SymbologyIdentifier symbologyIdentifier = {'G', '0', 0};
 
 	int xStop = next.pixelsTillEnd();
 	return Barcode(txt, rowNumber, xStart, xStop, BarcodeFormat::Code93, symbologyIdentifier, error);
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

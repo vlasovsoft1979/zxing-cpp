@@ -11,9 +11,9 @@ namespace ZXing {
 
 class BitArray;
 
-namespace OneD::DataBar {
+namespace OneD { namespace DataBar {
 
 std::string DecodeExpandedBits(const BitArray& bits);
 
-} // namespace OneD::DataBar
+}} // namespace OneD::DataBar
 } // namespace ZXing

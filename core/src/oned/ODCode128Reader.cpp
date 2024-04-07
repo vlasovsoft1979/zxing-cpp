@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 static const float MAX_AVG_VARIANCE = 0.25f;
 static const float MAX_INDIVIDUAL_VARIANCE = 0.7f;
@@ -37,15 +37,25 @@ static const int CODE_STOP = 106;
 
 class Raw2TxtDecoder
 {
-	int codeSet = 0;
-	SymbologyIdentifier _symbologyIdentifier = {'C', '0'}; // ISO/IEC 15417:2007 Annex C Table C.1
-	bool _readerInit = false;
+	int codeSet;
+	SymbologyIdentifier _symbologyIdentifier;
+	bool _readerInit;
 	std::string txt;
-	size_t lastTxtSize = 0;
+	size_t lastTxtSize;
 
-	bool fnc4All = false;
-	bool fnc4Next = false;
-	bool shift = false;
+	bool fnc4All;
+	bool fnc4Next;
+	bool shift;
+
+	Raw2TxtDecoder()
+		: codeSet(0)
+		, _symbologyIdentifier{'C', '0', 0} // ISO/IEC 15417:2007 Annex C Table C.1
+		, _readerInit(false)
+		, lastTxtSize(0)
+		, fnc4All(false)
+		, fnc4Next(false)
+		, shift(false)
+	{}
 
 	void fnc1(const bool isCodeSetC)
 	{
@@ -155,7 +165,7 @@ public:
 };
 
 // all 3 start patterns share the same 2-1-1 prefix
-constexpr auto START_PATTERN_PREFIX = FixedPattern<3, 4>{2, 1, 1};
+constexpr auto START_PATTERN_PREFIX = FixedPattern<3, 4>{{2, 1, 1}};
 constexpr int CHAR_LEN = 6;
 constexpr float QUIET_ZONE = 5;	// quiet zone spec is 10 modules, real world examples ignore that, see #138
 constexpr int CHAR_SUM = 11;
@@ -178,7 +188,7 @@ static auto E2E_PATTERNS = [] {
 Barcode Code128Reader::decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const
 {
 	int minCharCount = 4; // start + payload + checksum + stop
-	auto decodePattern = [](const PatternView& view, bool start = false) {
+	auto decodePattern = [this](const PatternView& view, bool start = false) {
 		// This is basically the reference algorithm from the specification
 		int code = IndexOf(E2E_PATTERNS, ToInt(NormalizedE2EPattern<CHAR_LEN, CHAR_SUM>(view)));
 		if (code == -1 && !start) // if the reference algo fails, give the original upstream version a try (required to decode a few samples)
@@ -242,4 +252,4 @@ Barcode Code128Reader::decodePattern(int rowNumber, PatternView& next, std::uniq
 				   raw2txt.readerInit());
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

@@ -23,7 +23,7 @@ class BitMatrix;
 class MultiFormatWriter
 {
 public:
-	explicit MultiFormatWriter(BarcodeFormat format) : _format(format) {}
+	explicit MultiFormatWriter(BarcodeFormat format) : _format(format), _encoding(CharacterSet::Unknown), _margin(-1), _eccLevel(-1)  {}
 
 	/**
 	* Used for Aztec, PDF417, and QRCode only.
@@ -54,9 +54,9 @@ public:
 
 private:
 	BarcodeFormat _format;
-	CharacterSet _encoding = CharacterSet::Unknown;
-	int _margin = -1;
-	int _eccLevel = -1;
+	CharacterSet _encoding;
+	int _margin;
+	int _eccLevel;
 };
 
 } // ZXing

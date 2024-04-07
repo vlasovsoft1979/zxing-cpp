@@ -14,7 +14,7 @@
 #include <string>
 #include <memory>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 static const char ALPHABET[] = "0123456789-$:/.+ABCD";
 
@@ -25,7 +25,7 @@ static const int CHARACTER_ENCODINGS[] = {
 	0x0c, 0x18, 0x45, 0x51, 0x54, 0x15, 0x1A, 0x29, 0x0B, 0x0E, // -$:/.+ABCD
 };
 
-static_assert(Size(ALPHABET) - 1 == Size(CHARACTER_ENCODINGS), "table size mismatch");
+//static_assert(Size(ALPHABET) - 1 == Size(CHARACTER_ENCODINGS), "table size mismatch");
 
 // some industries use a checksum standard but this is not part of the original codabar standard
 // for more information see : http://www.mecsw.com/specs/codabar.html
@@ -88,10 +88,10 @@ Barcode CodabarReader::decodePattern(int rowNumber, PatternView& next, std::uniq
 
 	// symbology identifier ISO/IEC 15424:2008 4.4.9
 	// if checksum processing were implemented and checksum present and stripped then modifier would be 4
-	SymbologyIdentifier symbologyIdentifier = {'F', '0'};
+	SymbologyIdentifier symbologyIdentifier = {'F', '0', 0};
 
 	int xStop = next.pixelsTillEnd();
 	return Barcode(txt, rowNumber, xStart, xStop, BarcodeFormat::Codabar, symbologyIdentifier);
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

@@ -8,14 +8,12 @@
 
 #include "ODRowReader.h"
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 class CodabarReader : public RowReader
 {
 public:
-	using RowReader::RowReader;
-
-	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>& state) const override;
+	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>& state) const;
 };
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

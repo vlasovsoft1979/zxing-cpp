@@ -7,7 +7,7 @@
 
 #include "Utf.h"
 
-namespace ZXing::TextUtfEncoding {
+namespace ZXing { namespace TextUtfEncoding {
 
 std::string ToUtf8(std::wstring_view str)
 {
@@ -25,4 +25,4 @@ std::wstring FromUtf8(std::string_view utf8)
 	return ZXing::FromUtf8(utf8);
 }
 
-} // namespace ZXing::TextUtfEncoding
+}} // namespace ZXing::TextUtfEncoding

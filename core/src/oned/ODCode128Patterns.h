@@ -8,8 +8,8 @@
 
 #include <array>
 
-namespace ZXing::OneD::Code128 {
+namespace ZXing { namespace OneD { namespace Code128 {
 
 extern const std::array<std::array<int, 6>, 107> CODE_PATTERNS;
 
-} // namespace ZXing::OneD::Code128
+}}} // namespace ZXing::OneD::Code128

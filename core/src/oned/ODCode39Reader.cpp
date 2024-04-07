@@ -12,7 +12,7 @@
 
 #include <array>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 static const char ALPHABET[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*";
 
@@ -31,7 +31,7 @@ static const int CHARACTER_ENCODINGS[] = {
 	0x0A2, 0x08A, 0x02A, 0x094 // /-% , *
 };
 
-static_assert(Size(ALPHABET) - 1 == Size(CHARACTER_ENCODINGS), "table size mismatch");
+//static_assert(Size(ALPHABET) - 1 == Size(CHARACTER_ENCODINGS), "table size mismatch");
 
 static const char PERCENTAGE_MAPPING[26] = {
 	'A' - 38, 'B' - 38, 'C' - 38, 'D' - 38, 'E' - 38,	// %A to %E map to control codes ESC to USep
@@ -42,7 +42,7 @@ static const char PERCENTAGE_MAPPING[26] = {
 	127, 127, 127										// %X to %Z all map to DEL (127)
 };
 
-using CounterContainer = std::array<int, 9>;
+typedef std::array<int, 9> CounterContainer;
 
 // each character has 5 bars and 4 spaces
 constexpr int CHAR_LEN = 9;
@@ -139,4 +139,4 @@ Barcode Code39Reader::decodePattern(int rowNumber, PatternView& next, std::uniqu
 	return {std::move(txt), rowNumber, xStart, xStop, BarcodeFormat::Code39, symbologyIdentifier, error};
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

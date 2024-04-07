@@ -33,7 +33,7 @@ void TextEncoder::GetBytes(const std::string& str, CharacterSet charset, std::st
 	bytes.resize(eci_len); // Sufficient but approximate length
 
 	error_number = zueci_utf8_to_eci(eci, reinterpret_cast<const unsigned char *>(str.data()), str_len,
-									 reinterpret_cast<unsigned char *>(bytes.data()), &eci_len);
+									 reinterpret_cast<unsigned char *>(&bytes[0]), &eci_len);
 	if (error_number >= ZUECI_ERROR) {
 		bytes.clear();
 		throw std::invalid_argument("Unexpected charcode");
