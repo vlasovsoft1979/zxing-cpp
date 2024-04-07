@@ -10,7 +10,7 @@
 
 #include <vector>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 class Token;
 
@@ -27,14 +27,27 @@ public:
 
 	// The current mode of the encoding (or the mode to which we'll return if
 	// we're in Binary Shift mode.
-	int mode = 0;
+	int mode;
 	
 	// If non-zero, the number of most recent bytes that should be output
 	// in Binary Shift mode.
-	int binaryShiftByteCount = 0;
+	int binaryShiftByteCount;
 	
 	// The total number of bits generated (including Binary Shift).
-	int bitCount = 0;
+	int bitCount;
+
+	EncodingState()
+		: mode(0)
+		, binaryShiftByteCount(0)
+		, bitCount(0)
+	{}
+
+	EncodingState(const std::vector<Token>& tokens, int mode, int binaryShiftByteCount, int bitCount)
+		: tokens(tokens)
+		, mode(mode)
+		, binaryShiftByteCount(binaryShiftByteCount)
+		, bitCount(bitCount)
+	{}
 };
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

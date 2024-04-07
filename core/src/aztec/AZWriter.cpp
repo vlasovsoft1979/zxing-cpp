@@ -13,12 +13,13 @@
 
 #include <utility>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 Writer::Writer() :
 	_encoding(CharacterSet::ISO8859_1),
 	_eccPercent(Encoder::DEFAULT_EC_PERCENT),
-	_layers(Encoder::DEFAULT_AZTEC_LAYERS)
+	_layers(Encoder::DEFAULT_AZTEC_LAYERS),
+	_margin(0)
 {
 }
 
@@ -35,4 +36,4 @@ BitMatrix Writer::encode(const std::string& contents, int width, int height) con
 	return encode(FromUtf8(contents), width, height);
 }
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

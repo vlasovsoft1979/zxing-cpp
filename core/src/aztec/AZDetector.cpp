@@ -20,10 +20,10 @@
 #include "ZXAlgorithms.h"
 
 #include <algorithm>
-#include <optional>
+#include "tools/optional.hpp"
 #include <vector>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 static bool IsAztecCenterPattern(const PatternView& view)
 {
@@ -94,9 +94,9 @@ static int CheckSymmetricAztecCenterPattern(BitMatrixCursorI& cur, int range, bo
 
 static std::optional<ConcentricPattern> LocateAztecCenter(const BitMatrix& image, PointF center, int spreadH)
 {
-	auto cur = BitMatrixCursor(image, PointI(center), {});
+	auto cur = BitMatrixCursor<PointI>(image, PointI(center), {});
 	int minSpread = spreadH, maxSpread = 0;
-	for (auto d : {PointI{0, 1}, {1, 0}, {1, 1}, {1, -1}}) {
+	for (auto d : std::array<PointI, 4>{{PointI{0, 1}, {1, 0}, {1, 1}, {1, -1}}}) {
 		int spread = CheckSymmetricAztecCenterPattern(cur.setDirection(d), spreadH, d.x == 0);
 		if (!spread)
 			return {};
@@ -113,7 +113,7 @@ static std::vector<ConcentricPattern> FindPureFinderPattern(const BitMatrix& ima
 		return {};
 
 	PointF p(left + width / 2, top + height / 2);
-	constexpr auto PATTERN = FixedPattern<7, 7>{1, 1, 1, 1, 1, 1, 1};
+	constexpr auto PATTERN = FixedPattern<7, 7>{{1, 1, 1, 1, 1, 1, 1}};
 	if (auto pattern = LocateConcentricPattern(image, PATTERN, p, width / 2))
 		return {*pattern};
 	else
@@ -124,7 +124,7 @@ static std::vector<ConcentricPattern> FindFinderPatterns(const BitMatrix& image,
 {
 	std::vector<ConcentricPattern> res;
 
-	[[maybe_unused]] int N = 0;
+	/*[[maybe_unused]]*/ int N = 0;
 
 #if 0 // reference algorithm for finding aztec center candidates
 	constexpr auto PATTERN = FixedPattern<7, 7>{1, 1, 1, 1, 1, 1, 1};
@@ -231,7 +231,7 @@ static std::vector<ConcentricPattern> FindFinderPatterns(const BitMatrix& image,
 
 static int FindRotation(uint32_t bits, bool mirror)
 {
-	const uint32_t mask = mirror ? 0b111'000'001'110 : 0b111'011'100'000;
+	const uint32_t mask = mirror ? 0b111000001110 : 0b111011100000;
 	for (int i = 0; i < 4; ++i) {
 		if (BitHacks::CountBitsSet(mask ^ bits) <= 2) // at most 2 bits may be wrong (24778:2008(E) 14.3.3 sais 3 but that is wrong)
 			return i;
@@ -244,7 +244,7 @@ static int FindRotation(uint32_t bits, bool mirror)
 static uint32_t SampleOrientationBits(const BitMatrix& image, const PerspectiveTransform& mod2Pix, int radius)
 {
 	uint32_t bits = 0;
-	for (auto d : {PointI{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}) {
+	for (auto d : std::array<PointI, 4>{{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}}) {
 		auto corner = radius * d;
 		auto cornerL = corner + PointI{0, -d.y};
 		auto cornerR = corner + PointI{-d.x, 0};
@@ -267,7 +267,7 @@ static int ModeMessage(const BitMatrix& image, const PerspectiveTransform& mod2P
 
 	// read the bits between the corner bits along the 4 edges
 	uint64_t bits = 0;
-	for (auto d : {PointI{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}) {
+	for (auto d : std::array<PointI, 4>{{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}}) {
 		auto corner = radius * d;
 		auto next = (d.x == d.y) ? PointI{-d.x, 0} : PointI{0, -d.y};
 		for (int i = 2; i <= 2 * radius - 2; ++i) {
@@ -383,7 +383,8 @@ DetectorResults Detect(const BitMatrix& image, bool isPure, bool tryHarder, int 
 		// improve prescision of sample grid by extrapolating from outer square of white pixels (5 edges away from center)
 		if (radius == 7) {
 			if (auto fpQuad5 = FindConcentricPatternCorners(image, fp, fp.size * 5 / 3, 5)) {
-				if (auto mod2Pix = PerspectiveTransform(CenteredSquare(11), *fpQuad5); mod2Pix.isValid()) {
+				auto mod2Pix = PerspectiveTransform(CenteredSquare(11), *fpQuad5);
+				if (mod2Pix.isValid()) {
 					int rotate5 = FindRotation(SampleOrientationBits(image, mod2Pix, radius), mirror);
 					if (rotate5 != -1) {
 						srcQuad = CenteredSquare(11);
@@ -418,4 +419,4 @@ DetectorResults Detect(const BitMatrix& image, bool isPure, bool tryHarder, int 
 	return res;
 }
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

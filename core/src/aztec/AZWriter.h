@@ -48,7 +48,7 @@ private:
 	CharacterSet _encoding;
 	int _eccPercent;
 	int _layers;
-	int _margin = 0;
+	int _margin;
 };
 
 } // Aztec

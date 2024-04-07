@@ -10,23 +10,29 @@
 
 #include <utility>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 class DetectorResult : public ZXing::DetectorResult
 {
-	bool _compact = false;
-	int _nbDatablocks = 0;
-	int _nbLayers = 0;
-	bool _readerInit = false;
-	bool _isMirrored = false;
+	bool _compact;
+	int _nbDatablocks;
+	int _nbLayers;
+	bool _readerInit;
+	bool _isMirrored;
 
 	DetectorResult(const DetectorResult&) = delete;
 	DetectorResult& operator=(const DetectorResult&) = delete;
 
 public:
-	DetectorResult() = default;
-	DetectorResult(DetectorResult&&) noexcept = default;
-	DetectorResult& operator=(DetectorResult&&) noexcept = default;
+	DetectorResult()
+		: _compact(false)
+		, _nbDatablocks(0)
+		, _nbLayers(0)
+		, _readerInit(false)
+		, _isMirrored(false)
+	{}
+	DetectorResult(DetectorResult&&) = default;
+	DetectorResult& operator=(DetectorResult&&) = default;
 
 	DetectorResult(ZXing::DetectorResult&& result, bool isCompact, int nbDatablocks, int nbLayers, bool readerInit, bool isMirrored)
 		: ZXing::DetectorResult{std::move(result)},
@@ -44,4 +50,4 @@ public:
 	bool isMirrored() const { return _isMirrored; }
 };
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

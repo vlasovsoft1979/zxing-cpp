@@ -17,7 +17,7 @@
 
 #include <utility>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 Barcode Reader::decode(const BinaryBitmap& image) const
 {
@@ -59,4 +59,4 @@ Barcodes Reader::decode(const BinaryBitmap& image, int maxSymbols) const
 	return baracodes;
 }
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

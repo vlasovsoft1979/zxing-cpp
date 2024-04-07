@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 static const int MAX_NB_BITS = 32;
 static const int MAX_NB_BITS_COMPACT = 4;
@@ -301,4 +301,4 @@ Encoder::Encode(const std::string& data, int minECCPercent, int userSpecifiedLay
 	return output;
 }
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

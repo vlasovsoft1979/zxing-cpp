@@ -18,7 +18,7 @@ class DetectorResult;
 
 DetectorResult Detect(const BitMatrix& image, bool isPure, bool tryHarder = true);
 
-using DetectorResults = std::vector<DetectorResult>;
+typedef std::vector<DetectorResult> DetectorResults;
 DetectorResults Detect(const BitMatrix& image, bool isPure, bool tryHarder, int maxSymbols);
 
 } // Aztec

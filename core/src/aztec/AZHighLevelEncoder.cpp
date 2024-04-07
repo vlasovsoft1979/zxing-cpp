@@ -17,7 +17,7 @@
 #include <list>
 #include <vector>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 // Do not change these constants
 static const int MODE_UPPER = 0; // 5 bits
@@ -374,4 +374,4 @@ HighLevelEncoder::Encode(const std::string& text)
 	return ToBitArray(minState, text);
 }
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

@@ -8,15 +8,13 @@
 
 #include "Reader.h"
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 class Reader : public ZXing::Reader
 {
 public:
-	using ZXing::Reader::Reader;
-
-	Barcode decode(const BinaryBitmap& image) const override;
-	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const override;
+	Barcode decode(const BinaryBitmap& image) const ;
+	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const;
 };
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

@@ -22,7 +22,7 @@
 #include <utility>
 #include <vector>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 enum class Table
 {
@@ -356,4 +356,4 @@ DecoderResult Decode(const DetectorResult& detectorResult)
 	}
 }
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec

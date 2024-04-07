@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 void
 Token::appendTo(BitArray& bitArray, const std::string& text) const
@@ -41,4 +41,4 @@ Token::appendTo(BitArray& bitArray, const std::string& text) const
 	}
 }
 
-} // namespace ZXing::Aztec
+}} // namespace ZXing::Aztec
