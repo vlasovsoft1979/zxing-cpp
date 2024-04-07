@@ -66,7 +66,11 @@ public:
 			throw std::invalid_argument("Invalid size: width * height is too big");
 	}
 
-	explicit BitMatrix(int dimension) : _width(dimension), _height(dimension) {} // Construct a square matrix.
+	explicit BitMatrix(int dimension) : _width(dimension), _height(dimension), _bits(dimension * dimension, UNSET_V)
+	{
+		if (dimension != 0 && Size(_bits) / dimension != dimension)
+			throw std::invalid_argument("Invalid size: dimension * dimension is too big");
+	}
 
 	BitMatrix(BitMatrix&& other) = default;
 	BitMatrix& operator=(BitMatrix&& other) = default;
