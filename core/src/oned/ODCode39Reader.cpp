@@ -80,7 +80,7 @@ Barcode Code39Reader::decodePattern(int rowNumber, PatternView& next, std::uniqu
 	auto isStartOrStopSymbol = [](char c) { return c == '*'; };
 
 	// provide the indices with the narrow bars/spaces which have to be equally wide
-	constexpr auto START_PATTERN = FixedSparcePattern<CHAR_LEN, 6>{0, 2, 3, 5, 7, 8};
+	constexpr auto START_PATTERN = FixedPattern<CHAR_LEN, 6, true>{{0, 2, 3, 5, 7, 8}};
 	// quiet zone is half the width of a character symbol
 	constexpr float QUIET_ZONE_SCALE = 0.5f;
 
@@ -107,14 +107,14 @@ Barcode Code39Reader::decodePattern(int rowNumber, PatternView& next, std::uniqu
 			return {};
 	} while (!isStartOrStopSymbol(txt.back()));
 
-	txt.pop_back(); // remove asterisk
+	if (!txt.empty()) txt.resize(txt.size() - 1); // remove asterisk
 
 	// check txt length and whitespace after the last char. See also FindStartPattern.
 	if (Size(txt) < minCharCount - 2 || !next.hasQuietZoneAfter(QUIET_ZONE_SCALE))
 		return {};
 
 	auto lastChar = txt.back();
-	txt.pop_back();
+	if (!txt.empty()) txt.resize(txt.size() - 1);
 	int checksum = TransformReduce(txt, 0, [](char c) { return IndexOf(ALPHABET, c); });
 	bool hasValidCheckSum = lastChar == ALPHABET[checksum % 43];
 	if (!hasValidCheckSum)
@@ -132,8 +132,8 @@ Barcode Code39Reader::decodePattern(int rowNumber, PatternView& next, std::uniqu
 	Error error = _opts.validateCode39CheckSum() && !hasValidCheckSum ? ChecksumError() : Error();
 
 	// Symbology identifier modifiers ISO/IEC 16388:2007 Annex C Table C.1
-	constexpr const char symbologyModifiers[4] = { '0', '1' /*checksum*/, '4' /*full ASCII*/, '5' /*checksum + full ASCII*/ };
-	SymbologyIdentifier symbologyIdentifier = {'A', symbologyModifiers[(int)hasValidCheckSum + 2 * (int)hasFullASCII]};
+	constexpr char symbologyModifiers[4] = { '0', '1' /*checksum*/, '4' /*full ASCII*/, '5' /*checksum + full ASCII*/ };
+	SymbologyIdentifier symbologyIdentifier = {'A', symbologyModifiers[(int)hasValidCheckSum + 2 * (int)hasFullASCII], 0};
 
 	int xStop = next.pixelsTillEnd();
 	return {std::move(txt), rowNumber, xStart, xStop, BarcodeFormat::Code39, symbologyIdentifier, error};

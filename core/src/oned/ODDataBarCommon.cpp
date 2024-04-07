@@ -68,11 +68,11 @@ int GetValue(const Array4I& widths, int maxWidth, bool noNarrow)
 template <typename T>
 struct OddEven
 {
-	T odd = {}, evn = {};
+	T odd, evn;
 	T& operator[](int i) { return i & 1 ? evn : odd; }
 };
 
-using Array4F = std::array<float, 4>;
+typedef std::array<float, 4> Array4F;
 
 bool ReadDataCharacterRaw(const PatternView& view, int numModules, bool reversed, Array4I& oddPattern,
 						  Array4I& evnPattern)

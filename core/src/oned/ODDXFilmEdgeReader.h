@@ -7,7 +7,7 @@
 
 #include "ODRowReader.h"
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 /**
  * <p>Implements decoding of the DX Edge Film code format, a type or barcode found on 35mm films.</p>
@@ -18,9 +18,8 @@ namespace ZXing::OneD {
 class DXFilmEdgeReader : public RowReader
 {
 public:
-	using RowReader::RowReader;
-
-	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const override;
+	explicit DXFilmEdgeReader(const ReaderOptions& opts) : RowReader(opts) {}
+	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const;
 };
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

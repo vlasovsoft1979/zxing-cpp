@@ -13,6 +13,7 @@ namespace ZXing { namespace OneD {
 class Code39Reader : public RowReader
 {
 public:
+	explicit Code39Reader(const ReaderOptions& opts) : RowReader(opts) {}
 	/**
 	* Creates a reader that can be configured to check the last character as a check digit,
 	* or optionally attempt to decode "extended Code 39" sequences that are used to encode

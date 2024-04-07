@@ -37,7 +37,7 @@ void IncrementLineCount(Barcode& r)
 
 } // namespace ZXing
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 Reader::Reader(const ReaderOptions& opts) : ZXing::Reader(opts)
 {
@@ -236,7 +236,7 @@ static Barcodes DoDecode(const std::vector<std::unique_ptr<RowReader>>& readers,
 
 out:
 	// remove all symbols with insufficient line count
-	auto it = std::remove_if(res.begin(), res.end(), [&](auto&& r) { return r.lineCount() < minLineCount; });
+	auto it = std::remove_if(res.begin(), res.end(), [&](const Barcode& r) { return r.lineCount() < minLineCount; });
 	res.erase(it, res.end());
 
 	// if symbols overlap, remove the one with a lower line count
@@ -246,7 +246,7 @@ out:
 				*(a->lineCount() < b->lineCount() ? a : b) = Barcode();
 
 	//TODO: C++20 res.erase_if()
-	it = std::remove_if(res.begin(), res.end(), [](auto&& r) { return r.format() == BarcodeFormat::None; });
+	it = std::remove_if(res.begin(), res.end(), [](const Barcode& r) { return r.format() == BarcodeFormat::None; });
 	res.erase(it, res.end());
 
 #ifdef PRINT_DEBUG
@@ -279,4 +279,4 @@ Barcodes Reader::decode(const BinaryBitmap& image, int maxSymbols) const
 	return resH;
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

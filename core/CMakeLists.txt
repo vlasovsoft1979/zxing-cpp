@@ -323,63 +323,63 @@ endif()
 
 if (ZXING_READERS OR ZXING_WRITERS_OLD)
     set (ONED_FILES
-#        src/oned/ODUPCEANCommon.h
-#        src/oned/ODUPCEANCommon.cpp
-#        src/oned/ODCode128Patterns.h
-#        src/oned/ODCode128Patterns.cpp
+        src/oned/ODUPCEANCommon.h
+        src/oned/ODUPCEANCommon.cpp
+        src/oned/ODCode128Patterns.h
+        src/oned/ODCode128Patterns.cpp
     )
 endif()
 if (ZXING_READERS)
     set (ONED_FILES ${ONED_FILES}
-#        src/oned/ODCodabarReader.h
-#        src/oned/ODCodabarReader.cpp
-#        src/oned/ODCode39Reader.h
-#        src/oned/ODCode39Reader.cpp
-#        src/oned/ODCode93Reader.h
-#        src/oned/ODCode93Reader.cpp
-#        src/oned/ODCode128Reader.h
-#        src/oned/ODCode128Reader.cpp
-#        src/oned/ODDataBarCommon.h
-#        src/oned/ODDataBarCommon.cpp
-#        src/oned/ODDataBarReader.h
-#        src/oned/ODDataBarReader.cpp
-#        src/oned/ODDataBarExpandedBitDecoder.h
-#        src/oned/ODDataBarExpandedBitDecoder.cpp
-#        src/oned/ODDataBarExpandedReader.h
-#        src/oned/ODDataBarExpandedReader.cpp
-#        src/oned/ODDXFilmEdgeReader.h
-#        src/oned/ODDXFilmEdgeReader.cpp
-#        src/oned/ODITFReader.h
-#        src/oned/ODITFReader.cpp
-#        src/oned/ODMultiUPCEANReader.h
-#        src/oned/ODMultiUPCEANReader.cpp
-#        src/oned/ODReader.h
-#        src/oned/ODReader.cpp
-#        src/oned/ODRowReader.h
+        src/oned/ODCodabarReader.h
+        src/oned/ODCodabarReader.cpp
+        src/oned/ODCode39Reader.h
+        src/oned/ODCode39Reader.cpp
+        src/oned/ODCode93Reader.h
+        src/oned/ODCode93Reader.cpp
+        src/oned/ODCode128Reader.h
+        src/oned/ODCode128Reader.cpp
+        src/oned/ODDataBarCommon.h
+        src/oned/ODDataBarCommon.cpp
+        src/oned/ODDataBarReader.h
+        src/oned/ODDataBarReader.cpp
+        src/oned/ODDataBarExpandedBitDecoder.h
+        src/oned/ODDataBarExpandedBitDecoder.cpp
+        src/oned/ODDataBarExpandedReader.h
+        src/oned/ODDataBarExpandedReader.cpp
+        src/oned/ODDXFilmEdgeReader.h
+        src/oned/ODDXFilmEdgeReader.cpp
+        src/oned/ODITFReader.h
+        src/oned/ODITFReader.cpp
+        src/oned/ODMultiUPCEANReader.h
+        src/oned/ODMultiUPCEANReader.cpp
+        src/oned/ODReader.h
+        src/oned/ODReader.cpp
+        src/oned/ODRowReader.h
     )
 endif()
 if (ZXING_WRITERS_OLD)
     set (ONED_FILES ${ONED_FILES}
-#        src/oned/ODCodabarWriter.h
-#        src/oned/ODCodabarWriter.cpp
-#        src/oned/ODCode39Writer.h
-#        src/oned/ODCode39Writer.cpp
-#        src/oned/ODCode93Writer.h
-#        src/oned/ODCode93Writer.cpp
-#        src/oned/ODCode128Writer.h
-#        src/oned/ODCode128Writer.cpp
-#        src/oned/ODEAN8Writer.h
-#        src/oned/ODEAN8Writer.cpp
-#        src/oned/ODEAN13Writer.h
-#        src/oned/ODEAN13Writer.cpp
-#        src/oned/ODITFWriter.h
-#        src/oned/ODITFWriter.cpp
-#        src/oned/ODUPCEWriter.h
-#        src/oned/ODUPCEWriter.cpp
-#        src/oned/ODUPCAWriter.h
-#        src/oned/ODUPCAWriter.cpp
-#        src/oned/ODWriterHelper.h
-#        src/oned/ODWriterHelper.cpp
+        src/oned/ODCodabarWriter.h
+        src/oned/ODCodabarWriter.cpp
+        src/oned/ODCode39Writer.h
+        src/oned/ODCode39Writer.cpp
+        src/oned/ODCode93Writer.h
+        src/oned/ODCode93Writer.cpp
+        src/oned/ODCode128Writer.h
+        src/oned/ODCode128Writer.cpp
+        src/oned/ODEAN8Writer.h
+        src/oned/ODEAN8Writer.cpp
+        src/oned/ODEAN13Writer.h
+        src/oned/ODEAN13Writer.cpp
+        src/oned/ODITFWriter.h
+        src/oned/ODITFWriter.cpp
+        src/oned/ODUPCEWriter.h
+        src/oned/ODUPCEWriter.cpp
+        src/oned/ODUPCAWriter.h
+        src/oned/ODUPCAWriter.cpp
+        src/oned/ODWriterHelper.h
+        src/oned/ODWriterHelper.cpp
     )
 endif()
 

@@ -17,7 +17,7 @@
 #include <cmath>
 #include <unordered_set>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 using namespace DataBar;
 
@@ -115,7 +115,7 @@ static Pair ReadPair(const PatternView& view, bool rightPair)
 				// include left and right guards
 				int xStart = view.pixelsInFront() - view[-1];
 				int xStop  = view.pixelsTillEnd() + 2 * view[FULL_PAIR_SIZE];
-				return {outside, inside, pattern, xStart, xStop};
+				return Pair{outside, inside, pattern, xStart, xStop};
 			}
 
 	return {};
@@ -195,7 +195,7 @@ Barcode DataBarReader::decodePattern(int rowNumber, PatternView& next, std::uniq
 		for (const auto& rightPair : prevState->rightPairs)
 			if (ChecksumIsValid(leftPair, rightPair)) {
 				// Symbology identifier ISO/IEC 24724:2011 Section 9 and GS1 General Specifications 5.1.3 Figure 5.1.3-2
-				Barcode res{DecoderResult(Content(ByteArray(ConstructText(leftPair, rightPair)), {'e', '0'}))
+				Barcode res{DecoderResult(Content(ByteArray(ConstructText(leftPair, rightPair)), SymbologyIdentifier{'e', '0', 0}))
 								.setLineCount(EstimateLineCount(leftPair, rightPair)),
 							{{}, EstimatePosition(leftPair, rightPair)},
 							BarcodeFormat::DataBar};
@@ -212,4 +212,4 @@ Barcode DataBarReader::decodePattern(int rowNumber, PatternView& next, std::uniq
 	return {};
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

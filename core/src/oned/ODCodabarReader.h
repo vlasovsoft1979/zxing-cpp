@@ -13,6 +13,7 @@ namespace ZXing { namespace OneD {
 class CodabarReader : public RowReader
 {
 public:
+	explicit CodabarReader(const ReaderOptions& opts) : RowReader(opts) {}
 	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>& state) const;
 };
 

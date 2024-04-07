@@ -11,7 +11,7 @@
 #include "Barcode.h"
 #include "ZXAlgorithms.h"
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 constexpr auto START_PATTERN_ = FixedPattern<4, 4>{1, 1, 1, 1};
 constexpr auto STOP_PATTERN_1 = FixedPattern<3, 4>{2, 1, 1};
@@ -67,10 +67,10 @@ Barcode ITFReader::decodePattern(int rowNumber, PatternView& next, std::unique_p
 
 	// Symbology identifier ISO/IEC 16390:2007 Annex C Table C.1
 	// See also GS1 General Specifications 5.1.2 Figure 5.1.2-2
-	SymbologyIdentifier symbologyIdentifier = {'I', GTIN::IsCheckDigitValid(txt) ? '1' : '0'};
+	SymbologyIdentifier symbologyIdentifier = {'I', GTIN::IsCheckDigitValid(txt) ? '1' : '0', 0};
 	
 	int xStop = next.pixelsTillEnd();
 	return Barcode(txt, rowNumber, xStart, xStop, BarcodeFormat::ITF, symbologyIdentifier, error);
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

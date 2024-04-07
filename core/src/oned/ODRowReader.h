@@ -59,7 +59,7 @@ public:
 
 	struct DecodingState
 	{
-		virtual ~DecodingState();
+		virtual ~DecodingState() {}
 	};
 
 	virtual ~RowReader() {}
@@ -104,7 +104,7 @@ public:
 	template <typename Counters, typename Pattern>
 	static float PatternMatchVariance(const Counters& counters, const Pattern& pattern, float maxIndividualVariance) {
 		assert(Size(counters) == Size(pattern));
-		return PatternMatchVariance(std::data(counters), std::data(pattern), std::size(counters), maxIndividualVariance);
+		return PatternMatchVariance(counters.data(), pattern.data(), counters.size(), maxIndividualVariance);
 	}
 
 	/**

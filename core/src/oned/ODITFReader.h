@@ -8,7 +8,7 @@
 
 #include "ODRowReader.h"
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 /**
 * <p>Implements decoding of the ITF format, or Interleaved Two of Five.</p>
@@ -25,9 +25,8 @@ namespace ZXing::OneD {
 class ITFReader : public RowReader
 {
 public:
-	using RowReader::RowReader;
-
-	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const override;
+	explicit ITFReader(const ReaderOptions& opts) : RowReader(opts) {}
+	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const;
 };
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

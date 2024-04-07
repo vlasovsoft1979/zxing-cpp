@@ -9,7 +9,7 @@
 
 #include "ODRowReader.h"
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 /**
 * Decodes DataBarExpandedReader (formerly known as RSS) sybmols, including truncated and stacked variants. See ISO/IEC 24724:2006.
@@ -17,9 +17,8 @@ namespace ZXing::OneD {
 class DataBarExpandedReader : public RowReader
 {
 public:
-	using RowReader::RowReader;
-
-	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>& state) const override;
+	explicit DataBarExpandedReader(const ReaderOptions& opts) : RowReader(opts) {}
+	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>& state) const;
 };
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

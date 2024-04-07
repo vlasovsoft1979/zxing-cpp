@@ -82,8 +82,9 @@ inline bool IsCharacter(const PatternView& view, int modules, float modSizeRef)
 
 struct Character
 {
-	int value = -1, checksum = 0;
-
+	int value, checksum;
+    Character() : value(-1), checksum(0) {}
+	Character(int value, int checksum) : value(value), checksum(checksum) {}
 	operator bool() const noexcept { return value != -1; }
 	bool operator==(const Character& o) const noexcept { return value == o.value && checksum == o.checksum; }
 	bool operator!=(const Character& o) const { return !(*this == o); }
@@ -92,8 +93,15 @@ struct Character
 struct Pair
 {
 	Character left, right;
-	int finder = 0, xStart = -1, xStop = 1, y = -1, count = 1;
-
+	int finder, xStart, xStop, y, count;
+	Pair() : finder(0), xStart(-1), xStop(1), y(-1), count(1) {}
+	Pair(int finder, int xStart, int xStop, int y, int count) 
+		: finder(finder)
+		, xStart(xStart)
+		, xStop(xStop)
+		, y(y)
+		, count(count)
+	{}
 	operator bool() const noexcept { return finder != 0; }
 	bool operator==(const Pair& o) const noexcept { return finder == o.finder && left == o.left && right == o.right; }
 	bool operator!=(const Pair& o) const noexcept { return !(*this == o); }
@@ -116,12 +124,12 @@ int ParseFinderPattern(const PatternView& view, bool reversed, T l2rPattern, T r
 	constexpr float MAX_AVG_VARIANCE        = 0.2f;
 	constexpr float MAX_INDIVIDUAL_VARIANCE = 0.45f;
 
-	int i = 1 + RowReader::DecodeDigit(view, reversed ? r2lPattern : l2rPattern, MAX_AVG_VARIANCE,
+	int i = 1 + ::ZXing::OneD::RowReader::DecodeDigit(view, reversed ? r2lPattern : l2rPattern, MAX_AVG_VARIANCE,
 									   MAX_INDIVIDUAL_VARIANCE, true);
 	return reversed ? -i : i;
 }
 
-using Array4I = std::array<int, 4>;
+typedef std::array<int, 4> Array4I;
 
 bool ReadDataCharacterRaw(const PatternView& view, int numModules, bool reversed, Array4I& oddPattern,
 						  Array4I& evnPattern);

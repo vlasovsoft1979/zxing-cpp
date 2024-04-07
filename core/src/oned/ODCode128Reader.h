@@ -13,6 +13,7 @@ namespace ZXing { namespace OneD {
 class Code128Reader : public RowReader
 {
 public:
+	explicit Code128Reader(const ReaderOptions& opts) : RowReader(opts) {}
 	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const;
 };
 

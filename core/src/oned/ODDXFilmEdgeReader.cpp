@@ -8,10 +8,10 @@
 
 #include "Barcode.h"
 
-#include <optional>
+#include "tools/optional.hpp"
 #include <vector>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 namespace {
 
@@ -27,10 +27,10 @@ constexpr int DATA_LENGTH_FN = 23;
 constexpr int DATA_LENGTH_NO_FN = 15;
 
 constexpr auto CLOCK_PATTERN_FN =
-	FixedPattern<25, CLOCK_LENGTH_FN>{5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3};
-constexpr auto CLOCK_PATTERN_NO_FN = FixedPattern<17, CLOCK_LENGTH_NO_FN>{5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3};
-constexpr auto DATA_START_PATTERN = FixedPattern<5, 5>{1, 1, 1, 1, 1};
-constexpr auto DATA_STOP_PATTERN = FixedPattern<3, 3>{1, 1, 1};
+	FixedPattern<25, CLOCK_LENGTH_FN>{{5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3}};
+constexpr auto CLOCK_PATTERN_NO_FN = FixedPattern<17, CLOCK_LENGTH_NO_FN>{{5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3}};
+constexpr auto DATA_START_PATTERN = FixedPattern<5, 5>{{1, 1, 1, 1, 1}};
+constexpr auto DATA_STOP_PATTERN = FixedPattern<3, 3>{{1, 1, 1}};
 
 template <int N, int SUM>
 bool IsPattern(PatternView& view, const FixedPattern<N, SUM>& pattern, float minQuietZone)
@@ -47,10 +47,12 @@ bool DistIsBelowThreshold(PointI a, PointI b, PointI threshold)
 // DX Film Edge clock track found on 35mm films.
 struct Clock
 {
-	bool hasFrameNr = false; // Clock track (thus data track) with frame number (longer version)
-	int rowNumber = 0;
-	int xStart = 0; // Beginning of the clock track on the X-axis, in pixels
-	int xStop = 0; // End of the clock track on the X-axis, in pixels
+	bool hasFrameNr; // Clock track (thus data track) with frame number (longer version)
+	int rowNumber;
+	int xStart; // Beginning of the clock track on the X-axis, in pixels
+	int xStop; // End of the clock track on the X-axis, in pixels
+
+	Clock() : hasFrameNr(false), rowNumber(0), xStart(0), xStop(0) {}
 
 	int dataLength() const { return hasFrameNr ? DATA_LENGTH_FN : DATA_LENGTH_NO_FN; }
 
@@ -64,13 +66,13 @@ struct Clock
 
 struct DXFEState : public RowReader::DecodingState
 {
-	int centerRow = 0;
+	int centerRow;
 	std::vector<Clock> clocks;
-
+	DXFEState() : centerRow(0) {}
 	// see if we a clock that starts near {x, y}
 	Clock* findClock(int x, int y)
 	{
-		auto i = FindIf(clocks, [start = PointI{x, y}](auto& v) { return v.isCloseToStart(start.x, start.y); });
+		auto i = FindIf(clocks, [start = PointI{x, y}](const Clock& v) { return v.isCloseToStart(start.x, start.y); });
 		return i != clocks.end() ? &(*i) : nullptr;
 	}
 
@@ -120,7 +122,8 @@ Barcode DXFilmEdgeReader::decodePattern(int rowNumber, PatternView& next, std::u
 	// Look for a pattern that is part of both the clock as well as the data track (ommitting the first bar)
 	constexpr auto Is4x1 = [](const PatternView& view, int spaceInPixel) {
 		// find min/max of 4 consecutive bars/spaces and make sure they are close together
-		auto [m, M] = std::minmax({view[1], view[2], view[3], view[4]});
+		auto mm = std::minmax({view[1], view[2], view[3], view[4]});
+		auto& m = mm.first; auto& M = mm.second;
 		return M <= m * 4 / 3 + 1 && spaceInPixel > m / 2;
 	};
 
@@ -222,4 +225,4 @@ Barcode DXFilmEdgeReader::decodePattern(int rowNumber, PatternView& next, std::u
 	return Barcode(txt, rowNumber, xStart, xStop, BarcodeFormat::DXFilmEdge, {});
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

@@ -108,7 +108,9 @@ static std::string DecodeGeneralPurposeBits(BitArrayView& bits)
 
 	// in NUMERIC encodation there might be a trailing FNC1 that needs to be ignored
 	if (res.size() && res.back() == GS)
-		res.pop_back();
+	{
+		if (!res.empty()) res.resize(res.size() - 1);
+	}
 
 	return res;
 }

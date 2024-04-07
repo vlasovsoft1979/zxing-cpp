@@ -16,15 +16,15 @@
 
 #include <cmath>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 constexpr int CHAR_LEN = 4;
 
-constexpr auto END_PATTERN           = FixedPattern<3, 3>{1, 1, 1};
-constexpr auto MID_PATTERN           = FixedPattern<5, 5>{1, 1, 1, 1, 1};
-constexpr auto UPCE_END_PATTERN      = FixedPattern<6, 6>{1, 1, 1, 1, 1, 1};
-constexpr auto EXT_START_PATTERN     = FixedPattern<3, 4>{1, 1, 2};
-constexpr auto EXT_SEPARATOR_PATTERN = FixedPattern<2, 2>{1, 1};
+constexpr auto END_PATTERN           = FixedPattern<3, 3>{{1, 1, 1}};
+constexpr auto MID_PATTERN           = FixedPattern<5, 5>{{1, 1, 1, 1, 1}};
+constexpr auto UPCE_END_PATTERN      = FixedPattern<6, 6>{{1, 1, 1, 1, 1, 1}};
+constexpr auto EXT_START_PATTERN     = FixedPattern<3, 4>{{1, 1, 2}};
+constexpr auto EXT_SEPARATOR_PATTERN = FixedPattern<2, 2>{{1, 1}};
 
 static const int FIRST_DIGIT_ENCODINGS[] = {0x00, 0x0B, 0x0D, 0x0E, 0x13, 0x19, 0x1C, 0x15, 0x16, 0x1A};
 
@@ -115,9 +115,9 @@ struct PartialResult
 {
 	std::string txt;
 	PatternView end;
-	BarcodeFormat format = BarcodeFormat::None;
+	BarcodeFormat format;
 
-	PartialResult() { txt.reserve(14); }
+	PartialResult() : format(BarcodeFormat::None) { txt.reserve(14); }
 	bool isValid() const { return format != BarcodeFormat::None; }
 };
 
@@ -297,7 +297,7 @@ Barcode MultiUPCEANReader::decodePattern(int rowNumber, PatternView& next, std::
 	// Symbology identifier modifiers ISO/IEC 15420:2009 Annex B Table B.1
 	// ISO/IEC 15420:2009 (& GS1 General Specifications 5.1.3) states that the content for "]E0" should be 13 digits,
 	// i.e. converted to EAN-13 if UPC-A/E, but not doing this here to maintain backward compatibility
-	SymbologyIdentifier symbologyIdentifier = {'E', res.format == BarcodeFormat::EAN8 ? '4' : '0'};
+	SymbologyIdentifier symbologyIdentifier = SymbologyIdentifier{'E', res.format == BarcodeFormat::EAN8 ? '4' : '0', 0};
 
 	next = res.end;
 
@@ -320,4 +320,4 @@ Barcode MultiUPCEANReader::decodePattern(int rowNumber, PatternView& next, std::
 	return Barcode(res.txt, rowNumber, begin.pixelsInFront(), next.pixelsTillEnd(), res.format, symbologyIdentifier, error);
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

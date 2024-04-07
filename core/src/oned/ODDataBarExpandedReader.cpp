@@ -18,7 +18,7 @@
 #include <map>
 #include <vector>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 using namespace DataBar;
 
@@ -100,11 +100,11 @@ static Character ReadDataCharacter(const PatternView& view, int finder, bool rev
 	int gSum = GSUM[group];
 	int value = vOdd * tEvn + vEvn + gSum;
 
-	return {value, checksum};
+	return Character{value, checksum};
 }
 
-using Pairs      = std::vector<Pair>;
-using Characters = std::vector<Character>;
+typedef std::vector<Pair> Pairs;
+typedef std::vector<Character> Characters;
 
 enum Direction
 {
@@ -154,7 +154,7 @@ static int ParseFinderPattern(const PatternView& view, Direction dir)
 
 static bool ChecksumIsValid(const Pairs& pairs)
 {
-	auto checksum = TransformReduce(pairs, 0, [](auto p) { return p.left.checksum + p.right.checksum; }) % 211 +
+	auto checksum = TransformReduce(pairs, 0, [](const Pair& p) { return p.left.checksum + p.right.checksum; }) % 211 +
 					211 * (2 * Size(pairs) - 4 - !pairs.back().right);
 	return pairs.front().left.value == checksum;
 }
@@ -181,7 +181,7 @@ static Pair ReadPair(const PatternView& view, Direction dir)
 								 ? ReadDataCharacter(RightChar(view), finder, true)
 								 : Character();
 				if (charR || Contains(VALID_HALF_PAIRS, finder))
-					return {charL, charR, finder, view.pixelsInFront(),
+					return Pair{charL, charR, finder, view.pixelsInFront(),
 							(charR ? RightChar(view) : Finder(view)).pixelsTillEnd()};
 			}
 
@@ -194,7 +194,7 @@ static Pairs ReadRowOfPairs(PatternView& next, int rowNumber)
 	Pairs pairs;
 	Pair pair;
 
-	if constexpr (STACKED) {
+	if (STACKED) {
 		// a possible first pair is either left2right starting on a space or right2left starting on a bar.
 		// it might be a half-pair
 		next = next.subView(0, HALF_PAIR_SIZE);
@@ -235,7 +235,7 @@ static Pairs ReadRowOfPairs(PatternView& next, int rowNumber)
 	return pairs;
 }
 
-using PairMap = std::map<int, Pairs>;
+typedef std::map<int, Pairs> PairMap;
 
 // inserts all pairs inside row into the PairMap or increases their count respectively.
 static bool Insert(PairMap& all, Pairs&& row)
@@ -243,7 +243,8 @@ static bool Insert(PairMap& all, Pairs&& row)
 	bool res = false;
 	for (const Pair& pair : row) {
 		auto& pairs = all[pair.finder];
-		if (auto i = Find(pairs, pair); i != pairs.end()) {
+		auto i = Find(pairs, pair);
+		if (i != pairs.end()) {
 			i->count++;
 			// bubble sort the pairs with the highest view count to the front so we test them first in FindValidSequence
 			while (i != pairs.begin() && i[0].count > i[-1].count) {
@@ -262,8 +263,8 @@ static bool FindValidSequence(const PairMap& all, ITER begin, ITER end, Pairs& s
 {
 	if (begin == end)
 		return ChecksumIsValid(stack);
-
-	if (auto ppairs = all.find(*begin); ppairs != all.end()) {
+	auto ppairs = all.find(*begin);
+	if (ppairs != all.end()) {
 		// only try the N most common pairs, this means the absolute maximum number of ChecksumIsValid() evaluations
 		// is N^11 (11 is the maximum sequence length).
 		constexpr int N = 2;
@@ -307,9 +308,12 @@ static Pairs FindValidSequence(PairMap& all)
 static void RemovePairs(PairMap& all, const Pairs& pairs)
 {
 	for(const auto& p : pairs)
-		if (auto i = Find(all[p.finder], p); i != all[p.finder].end())
+	{
+		auto i = Find(all[p.finder], p);
+		if (i != all[p.finder].end())
 			if (--i->count == 0)
 				all[p.finder].erase(i);
+	}
 }
 
 static BitArray BuildBitArray(const Pairs& pairs)
@@ -378,4 +382,4 @@ Barcode DataBarExpandedReader::decodePattern(int rowNumber, PatternView& view, s
 			{{}, EstimatePosition(pairs.front(), pairs.back())}, BarcodeFormat::DataBarExpanded};
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

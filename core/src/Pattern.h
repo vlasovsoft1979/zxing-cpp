@@ -166,6 +166,10 @@ struct FixedPattern
 	constexpr BarAndSpace<value_type> sums() const noexcept { return BarAndSpaceSum<N, value_type>(_data); }
 };
 
+template <int N, int SUM>
+struct FixedSparcePattern: public FixedPattern<N, SUM, true>
+{};
+
 template <bool E2E = false, int LEN, int SUM>
 double IsPattern(const PatternView& view, const FixedPattern<LEN, SUM, false>& pattern, int spaceInPixel = 0,
 				double minQuietZone = 0, double moduleSizeRef = 0)

@@ -15,7 +15,7 @@
 
 namespace ZXing { namespace OneD { namespace UPCEANCommon {
 
-using Digit = std::array<int, 4>;
+typedef std::array<int, 4> Digit;
 
 /**
  * Start/end guard pattern.

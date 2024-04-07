@@ -8,7 +8,7 @@
 
 #include "ODRowReader.h"
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 /**
 * @brief A reader that can read all available UPC/EAN formats.
@@ -16,9 +16,8 @@ namespace ZXing::OneD {
 class MultiUPCEANReader : public RowReader
 {
 public:
-	using RowReader::RowReader;
-
-	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const override;
+	explicit MultiUPCEANReader(const ReaderOptions& opts) : RowReader(opts) {}
+	Barcode decodePattern(int rowNumber, PatternView& next, std::unique_ptr<DecodingState>&) const;
 };
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD
