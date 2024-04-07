@@ -7,6 +7,10 @@
 
 namespace ZXing {
 
+constexpr Error::Type Error::Format;
+constexpr Error::Type Error::Checksum;
+constexpr Error::Type Error::Unsupported;
+
 std::string Error::location() const
 {
 	if (!_file)

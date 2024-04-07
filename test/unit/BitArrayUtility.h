@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <string_view>
+#include "tools/string_view.hpp"
 
 namespace ZXing {
 

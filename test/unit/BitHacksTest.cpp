@@ -36,7 +36,7 @@ TEST(BitHackTest, BitHacks)
 	EXPECT_EQ(HighestBitSet(0xffffffff), 31);
 	EXPECT_EQ(HighestBitSet(0x1F), 4);
 
-	using V = std::vector<uint32_t>;
+	typedef std::vector<uint32_t> V;
 	auto checkReverse = [](V&& v1, int p, V&& v2) {
 		Reverse(v1, p);
 		EXPECT_EQ(v1, v2);

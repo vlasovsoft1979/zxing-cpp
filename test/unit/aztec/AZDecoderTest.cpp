@@ -11,7 +11,7 @@
 #include "aztec/AZDetectorResult.h"
 
 #include "gtest/gtest.h"
-#include <string_view>
+#include "tools/string_view.h"
 #include <utility>
 
 namespace ZXing::Aztec {

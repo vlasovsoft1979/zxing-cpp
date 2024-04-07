@@ -22,8 +22,8 @@ public:
 	~ScopeExit() { fn(); }
 };
 
-template <class EF>
-ScopeExit(EF) -> ScopeExit<EF>;
+//template <class EF>
+//ScopeExit(EF) -> ScopeExit<EF>;
 
 /**
  * The SCOPE_EXIT macro is eliminating the need to give the object a name.
