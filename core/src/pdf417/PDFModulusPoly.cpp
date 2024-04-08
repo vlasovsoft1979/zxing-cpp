@@ -46,10 +46,10 @@ ModulusPoly::evaluateAt(int a) const
 		return coefficient(0);
 
 	if (a == 1) // return the sum of the coefficients
-		return Reduce(_coefficients, 0, [this](auto res, auto coef) { return _field->add(res, coef); });
+		return Reduce(_coefficients, 0, [this](int res, int coef) { return _field->add(res, coef); });
 
 	return std::accumulate(_coefficients.begin(), _coefficients.end(), 0,
-						   [this, a](auto res, auto coef) { return _field->add(_field->multiply(a, res), coef); });
+						   [this, a](int res, int coef) { return _field->add(_field->multiply(a, res), coef); });
 }
 
 ModulusPoly

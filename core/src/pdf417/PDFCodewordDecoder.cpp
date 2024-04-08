@@ -16,8 +16,8 @@
 namespace ZXing {
 namespace Pdf417 {
 
-static constexpr const int SYMBOL_COUNT = 2787;
-
+static constexpr int SYMBOL_COUNT = 2787;
+constexpr int CodewordDecoder::MAX_CODEWORDS_IN_BARCODE;
 
 /**
 * The sorted table of all possible symbols. Extracted from the PDF417
@@ -26,7 +26,7 @@ static constexpr const int SYMBOL_COUNT = 2787;
 * Note: stored in the table are only the 16 least significant bits (of 17),
 * each full symbol is preceded by a 1-bit, see getSymbol();
 */
-static constexpr const std::array<uint16_t, 2787> SYMBOL_TABLE = {
+static constexpr std::array<uint16_t, 2787> SYMBOL_TABLE = {
 	0x025e, 0x027a, 0x029e, 0x02bc, 0x02f2, 0x02f4, 0x032e, 0x034e, 0x035c, 0x0396, 0x03a6, 0x03ac,
 	0x0422, 0x0428, 0x0436, 0x0442, 0x0444, 0x0448, 0x0450, 0x045e, 0x0466, 0x046c, 0x047a, 0x0482,
 	0x049e, 0x04a0, 0x04bc, 0x04c6, 0x04d8, 0x04ee, 0x04f2, 0x04f4, 0x0504, 0x0508, 0x0510, 0x051e,
@@ -265,7 +265,7 @@ static constexpr const std::array<uint16_t, 2787> SYMBOL_TABLE = {
 /**
 * This table contains to codewords for all symbols.
 */
-static constexpr const std::array<uint16_t, 2787> CODEWORD_TABLE = {
+static constexpr std::array<uint16_t, 2787> CODEWORD_TABLE = {
 	2627, 1819, 2622, 2621, 1813, 1812, 2729, 2724, 2723, 2779, 2774, 2773, 902, 896, 908, 868, 865, 861, 859, 2511,
 	873, 871, 1780, 835, 2493, 825, 2491, 842, 837, 844, 1764, 1762, 811, 810, 809, 2483, 807, 2482, 806, 2480, 815,
 	814, 813, 812, 2484, 817, 816, 1745, 1744, 1742, 1746, 2655, 2637, 2635, 2626, 2625, 2623, 2628, 1820, 2752,
@@ -408,7 +408,7 @@ static constexpr const std::array<uint16_t, 2787> CODEWORD_TABLE = {
 	2105, 1202, 1199, 1196, 1211, 2061, 2057, 1576, 1543, 1540, 1484, 1481, 1478, 1491, 1700
 };
 
-using ModuleBitCountType = std::array<int, CodewordDecoder::BARS_IN_MODULE>;
+typedef std::array<int, CodewordDecoder::BARS_IN_MODULE> ModuleBitCountType;
 
 static ModuleBitCountType SampleBitCounts(const ModuleBitCountType& moduleBitCount)
 {
@@ -446,7 +446,7 @@ static int GetDecodedCodewordValue(const ModuleBitCountType& moduleBitCount)
 	return CodewordDecoder::GetCodeword(decodedValue) == -1 ? -1 : decodedValue;
 }
 
-static constexpr int getSymbol(int idx)
+static int getSymbol(int idx)
 {
 	return SYMBOL_TABLE[idx] | 0x10000;
 }

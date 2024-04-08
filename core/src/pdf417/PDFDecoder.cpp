@@ -18,7 +18,7 @@
 #include <sstream>
 #include <utility>
 
-namespace ZXing::Pdf417 {
+namespace ZXing { namespace Pdf417 {
 
 enum class Mode
 {
@@ -451,7 +451,7 @@ static std::string DecodeBase900toBase10(const std::vector<int>& codewords, int 
 {
 	// Table containing values for the exponent of 900.
 	static const auto EXP900 = []() {
-		std::array<BigInteger, 16> table = {1, 900};
+		std::array<BigInteger, 16> table{{BigInteger{1}, BigInteger{900}}};
 		for (size_t i = 2; i < table.size(); ++i)
 			table[i] = table[i - 1] * 900;
 		return table;
@@ -723,4 +723,4 @@ DecoderResult Decode(const std::vector<int>& codewords)
 		.setExtra(resultMetadata);
 }
 
-} // namespace ZXing::Pdf417
+}} // namespace ZXing::Pdf417

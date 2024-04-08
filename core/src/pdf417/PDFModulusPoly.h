@@ -22,13 +22,13 @@ class ModulusGF;
 */
 class ModulusPoly
 {
-	const ModulusGF* _field = nullptr;
+	const ModulusGF* _field;
 	std::vector<int> _coefficients;
 
 public:
 	// Build a invalid object, so that this can be used in container or return by reference,
 	// any access to invalid object is undefined behavior.
-	ModulusPoly() = default;
+	ModulusPoly() : _field(nullptr) {}
 
 	ModulusPoly(const ModulusGF& field, const std::vector<int>& coefficients);
 

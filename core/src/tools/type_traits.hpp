@@ -16,7 +16,7 @@ struct enable_if<T, true>
 };
 
 template <class T, T v>
-struct integral_constant   //integral C++ struct in C++98 manner
+struct integral_constant
 {
     typedef T value_type;
     typedef integral_constant<T,v> type;
@@ -28,13 +28,27 @@ typedef integral_constant<bool,true> true_type;
 typedef integral_constant<bool,false> false_type;
 
 template<typename T> struct is_integral : public false_type{};
-template<> struct is_integral<char> : public true_type{};
-template<> struct is_integral<int> : public true_type{};
-template<> struct is_integral<long> : public true_type{};
-template<> struct is_integral<long long> : public true_type{};
+template<> struct is_integral<signed char> : public true_type{};
+template<> struct is_integral<signed short> : public true_type{};
+template<> struct is_integral<signed int> : public true_type{};
+template<> struct is_integral<signed long> : public true_type{};
+template<> struct is_integral<signed long long> : public true_type{};
 template<> struct is_integral<unsigned char> : public true_type{};
+template<> struct is_integral<unsigned short> : public true_type{};
 template<> struct is_integral<unsigned int> : public true_type{};
 template<> struct is_integral<unsigned long> : public true_type{};
 template<> struct is_integral<unsigned long long> : public true_type{};
+
+template<typename T> struct is_unsigned : public false_type{};
+template<> struct is_unsigned<unsigned char> : public true_type{};
+template<> struct is_unsigned<unsigned short> : public true_type{};
+template<> struct is_unsigned<unsigned int> : public true_type{};
+template<> struct is_unsigned<unsigned long> : public true_type{};
+
+template<typename T> struct is_signed : public false_type{};
+template<> struct is_signed<signed char> : public true_type{};
+template<> struct is_signed<signed short> : public true_type{};
+template<> struct is_signed<signed int> : public true_type{};
+template<> struct is_signed<signed long> : public true_type{};
 
 }

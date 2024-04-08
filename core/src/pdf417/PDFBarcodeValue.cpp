@@ -29,10 +29,10 @@ BarcodeValue::value() const
 {
 	std::vector<int> result;
 	if (!_values.empty()) {
-		int maxConfidence = std::max_element(_values.begin(), _values.end(), [](auto& l, auto& r) { return l.second < r.second; })->second;
-		for (auto [value, count] : _values)
-			if (count == maxConfidence)
-				result.push_back(value);
+		int maxConfidence = std::max_element(_values.begin(), _values.end(), [](const std::pair<int, int>& l, const std::pair<int, int>& r) { return l.second < r.second; })->second;
+		for (auto val : _values)
+			if (val.second == maxConfidence)
+				result.push_back(val.first);
 	}
 	return result;
 }

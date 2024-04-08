@@ -10,7 +10,7 @@
 
 #include <list>
 
-namespace ZXing::Pdf417 {
+namespace ZXing { namespace Pdf417 {
 
 /**
 * This implementation can detect and decode PDF417 codes in an image.
@@ -20,10 +20,8 @@ namespace ZXing::Pdf417 {
 class Reader : public ZXing::Reader
 {
 public:
-	using ZXing::Reader::Reader;
-
-	Barcode decode(const BinaryBitmap& image) const override;
-	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const override;
+	Barcode decode(const BinaryBitmap& image) const;
+	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const;
 };
 
-} // namespace ZXing::Pdf417
+}} // namespace ZXing::Pdf417

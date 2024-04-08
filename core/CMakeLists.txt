@@ -386,50 +386,50 @@ endif()
 
 if (ZXING_READERS OR ZXING_WRITERS_OLD)
     set (PDF417_FILES
-#        src/pdf417/ZXBigInteger.h
-#        src/pdf417/ZXBigInteger.cpp
+        src/pdf417/ZXBigInteger.h
+        src/pdf417/ZXBigInteger.cpp
     )
 endif()
 if (ZXING_READERS)
     set (PDF417_FILES ${PDF417_FILES}
-#        src/pdf417/PDFBarcodeMetadata.h
-#        src/pdf417/PDFBarcodeValue.h
-#        src/pdf417/PDFBarcodeValue.cpp
-#        src/pdf417/PDFBoundingBox.h
-#        src/pdf417/PDFBoundingBox.cpp
-#        src/pdf417/PDFCodeword.h
-#        src/pdf417/PDFCodewordDecoder.h
-#        src/pdf417/PDFCodewordDecoder.cpp
-#        src/pdf417/PDFDecoder.h
-#        src/pdf417/PDFDecoder.cpp
-#        src/pdf417/PDFDecoderResultExtra.h
-#        src/pdf417/PDFDetectionResult.h
-#        src/pdf417/PDFDetectionResult.cpp
-#        src/pdf417/PDFDetectionResultColumn.h
-#        src/pdf417/PDFDetectionResultColumn.cpp
-#        src/pdf417/PDFDetector.h
-#        src/pdf417/PDFDetector.cpp
-#        src/pdf417/PDFModulusGF.h
-#        src/pdf417/PDFModulusGF.cpp
-#        src/pdf417/PDFModulusPoly.h
-#        src/pdf417/PDFModulusPoly.cpp
-#        src/pdf417/PDFReader.h
-#        src/pdf417/PDFReader.cpp
-#        src/pdf417/PDFScanningDecoder.h
-#        src/pdf417/PDFScanningDecoder.cpp
-#        src/pdf417/CustomData.h
-#        src/pdf417/ZXNullable.h
+        src/pdf417/PDFBarcodeMetadata.h
+        src/pdf417/PDFBarcodeValue.h
+        src/pdf417/PDFBarcodeValue.cpp
+        src/pdf417/PDFBoundingBox.h
+        src/pdf417/PDFBoundingBox.cpp
+        src/pdf417/PDFCodeword.h
+        src/pdf417/PDFCodewordDecoder.h
+        src/pdf417/PDFCodewordDecoder.cpp
+        src/pdf417/PDFDecoder.h
+        src/pdf417/PDFDecoder.cpp
+        src/pdf417/PDFDecoderResultExtra.h
+        src/pdf417/PDFDetectionResult.h
+        src/pdf417/PDFDetectionResult.cpp
+        src/pdf417/PDFDetectionResultColumn.h
+        src/pdf417/PDFDetectionResultColumn.cpp
+        src/pdf417/PDFDetector.h
+        src/pdf417/PDFDetector.cpp
+        src/pdf417/PDFModulusGF.h
+        src/pdf417/PDFModulusGF.cpp
+        src/pdf417/PDFModulusPoly.h
+        src/pdf417/PDFModulusPoly.cpp
+        src/pdf417/PDFReader.h
+        src/pdf417/PDFReader.cpp
+        src/pdf417/PDFScanningDecoder.h
+        src/pdf417/PDFScanningDecoder.cpp
+        src/pdf417/CustomData.h
+        src/pdf417/ZXNullable.h
     )
 endif()
 if (ZXING_WRITERS_OLD)
     set (PDF417_FILES ${PDF417_FILES}
-#        src/pdf417/PDFCompaction.h
-#        src/pdf417/PDFEncoder.h
-#        src/pdf417/PDFEncoder.cpp
-#        src/pdf417/PDFHighLevelEncoder.h
-#        src/pdf417/PDFHighLevelEncoder.cpp
-#        src/pdf417/PDFWriter.h
-#        src/pdf417/PDFWriter.cpp
+        src/pdf417/PDFCompaction.h
+        src/pdf417/PDFEncoder.h
+        src/pdf417/PDFEncoder.cpp
+        src/pdf417/PDFHighLevelEncoder.h
+        src/pdf417/PDFHighLevelEncoder.cpp
+        src/pdf417/PDFWriter.h
+        src/pdf417/PDFWriter.cpp
     )
 endif()
 

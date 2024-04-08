@@ -16,8 +16,8 @@
 
 namespace ZXing {
 
-using Block = BigInteger::Block;
-using Magnitude = std::vector<Block>;
+typedef BigInteger::Block Block;
+typedef std::vector<Block> Magnitude;
 
 static const size_t NB_BITS = 8 * sizeof(Block);
 

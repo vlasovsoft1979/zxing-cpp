@@ -19,19 +19,27 @@ namespace Pdf417 {
 */
 class DecoderResultExtra : public CustomData
 {
-	int _segmentIndex = -1;
+	int _segmentIndex;
 	std::string _fileId;
 	std::vector<int> _optionalData;
-	bool _lastSegment = false;
-	int _segmentCount = -1;
+	bool _lastSegment;
+	int _segmentCount;
 	std::string _sender;
 	std::string _addressee;
 	std::string _fileName;
-	int64_t _fileSize = -1;
-	int64_t _timestamp = -1;
-	int _checksum = -1;
+	int64_t _fileSize;
+	int64_t _timestamp;
+	int _checksum;
 
 public:
+	DecoderResultExtra() 
+		: _segmentIndex(-1)
+		, _lastSegment(false)
+		, _segmentCount(-1)
+		, _fileSize(-1)
+		, _timestamp(-1)
+		, _checksum(-1)
+	{}
 
 	int segmentIndex() const {
 		return _segmentIndex;

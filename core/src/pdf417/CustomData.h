@@ -11,7 +11,7 @@ namespace ZXing {
 class CustomData
 {
 public:
-	virtual ~CustomData() = default;
+	virtual ~CustomData() {}
 
 protected:
 	CustomData() = default;

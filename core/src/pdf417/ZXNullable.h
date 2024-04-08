@@ -11,13 +11,13 @@
 namespace ZXing {
 
 template <typename T>
-class Nullable final
+class Nullable
 {
-	bool m_hasValue = false;
+	bool m_hasValue;
 	T m_value;
 
 public:
-	Nullable() = default;
+	Nullable() : m_hasValue(false) {}
 	Nullable(const T &value) : m_hasValue(true), m_value(value) {}
 	Nullable(T &&value) noexcept : m_hasValue(true), m_value(std::move(value)) {}
 	Nullable(std::nullptr_t) {}

@@ -18,13 +18,13 @@ namespace Pdf417 {
 class CodewordDecoder
 {
 public:
-	static constexpr const int NUMBER_OF_CODEWORDS = 929;
+	static constexpr int NUMBER_OF_CODEWORDS = 929;
 	// Maximum Codewords (Data + Error).
-	static constexpr const int MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;
+	static constexpr int MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;
 	// One left row indication column + max 30 data columns + one right row indicator column
 	//public static final int MAX_CODEWORDS_IN_ROW = 32;
-	static constexpr const int MODULES_IN_CODEWORD = 17;
-	static constexpr const int BARS_IN_MODULE = 8;
+	static constexpr int MODULES_IN_CODEWORD = 17;
+	static constexpr int BARS_IN_MODULE = 8;
 
 	/**
 	* @param symbol encoded symbol to translate to a codeword

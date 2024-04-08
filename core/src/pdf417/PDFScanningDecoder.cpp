@@ -26,7 +26,7 @@ static const int CODEWORD_SKEW_SIZE = 2;
 static const int MAX_ERRORS = 3;
 static const int MAX_EC_CODEWORDS = 512;
 
-using ModuleBitCountType = std::array<int, CodewordDecoder::BARS_IN_MODULE>;
+typedef std::array<int, CodewordDecoder::BARS_IN_MODULE> ModuleBitCountType;
 
 static int AdjustCodewordStartColumn(const BitMatrix& image, int minColumn, int maxColumn, bool leftToRight, int codewordStartColumn, int imageRow)
 {
@@ -457,7 +457,7 @@ static std::vector<int> FindErrorMagnitudes(const ModulusPoly& errorEvaluator, c
 * @return false if errors cannot be corrected, maybe because of too many errors
 */
 ZXING_EXPORT_TEST_ONLY
-bool DecodeErrorCorrection(std::vector<int>& received, int numECCodewords, const std::vector<int>& erasures [[maybe_unused]], int& nbErrors)
+bool DecodeErrorCorrection(std::vector<int>& received, int numECCodewords, const std::vector<int>& erasures /*[[maybe_unused]]*/, int& nbErrors)
 {
 	const ModulusGF& field = GetModulusGF();
 	ModulusPoly poly(field, received);

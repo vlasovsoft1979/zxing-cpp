@@ -14,13 +14,13 @@ namespace Pdf417 {
 */
 class BarcodeMetadata
 {
-	int _columnCount = 0;
-	int _errorCorrectionLevel = 0;
-	int _rowCountUpperPart = 0;
-	int _rowCountLowerPart = 0;
+	int _columnCount;
+	int _errorCorrectionLevel;
+	int _rowCountUpperPart;
+	int _rowCountLowerPart;
 
 public:
-	BarcodeMetadata() = default;
+	BarcodeMetadata() : _columnCount(0), _errorCorrectionLevel(0), _rowCountUpperPart(0), _rowCountLowerPart(0) {}
 	BarcodeMetadata(int columnCount, int rowCountUpperPart, int rowCountLowerPart, int errorCorrectionLevel)
 	    : _columnCount(columnCount), _errorCorrectionLevel(errorCorrectionLevel), _rowCountUpperPart(rowCountUpperPart),
 	      _rowCountLowerPart(rowCountLowerPart)

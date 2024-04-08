@@ -16,14 +16,14 @@ class Codeword
 {
 	static const int BARCODE_ROW_UNKNOWN = -1;
 
-	int _startX = 0;
-	int _endX = 0;
-	int _bucket = 0;
-	int _value = 0;
-	int _rowNumber = BARCODE_ROW_UNKNOWN;
+	int _startX;
+	int _endX;
+	int _bucket;
+	int _value;
+	int _rowNumber;
 
 public:
-	Codeword() {}
+	Codeword() : _startX(0), _endX(0), _bucket(0), _value(0), _rowNumber(BARCODE_ROW_UNKNOWN) {}
 	Codeword(int startX, int endX, int bucket, int value) : _startX(startX), _endX(endX), _bucket(bucket), _value(value) {}
 
 	bool hasValidRowNumber() const {

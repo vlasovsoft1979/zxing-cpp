@@ -35,7 +35,8 @@ public:
 	{
 		std::shared_ptr<const BitMatrix> bits;
 		std::list<std::array<Nullable<ResultPoint>, 8>> points;
-		int rotation = -1;
+		int rotation;
+		Result() : rotation(-1) {}
 	};
 
 	static Result Detect(const BinaryBitmap& image, bool multiple, bool tryRotate);

@@ -97,34 +97,58 @@ static Barcodes DoDecode(const BinaryBitmap& image, bool multiple, bool tryRotat
 
 // new implementation (only for isPure use case atm.)
 
-using Pattern417 = std::array<uint16_t, 8>;
+typedef std::array<uint16_t, 8> Pattern417;
 
 struct CodeWord
 {
-	int cluster = -1;
-	int code = -1;
+	int cluster;
+	int code;
+	CodeWord() : cluster(-1), code(-1) {}
+	CodeWord(int cluster, int code) : cluster(cluster), code(code) {}
 	operator bool() const noexcept { return code != -1; }
 };
 
 struct SymbolInfo
 {
-	int width = 0, height = 0;
-	int nRows = 0, nCols = 0, firstRow = -1, lastRow = -1;
-	int ecLevel = -1;
-	int colWidth = 0;
-	float rowHeight = 0;
+	int width, height;
+	int nRows, nCols, firstRow, lastRow;
+	int ecLevel;
+	int colWidth;
+	float rowHeight;
+	SymbolInfo() 
+		: width(0)
+		, height(0)
+		, nRows(0)
+		, nCols(0)
+		, firstRow(-1)
+		, lastRow(-1)
+		, ecLevel(-1)
+		, colWidth(0)
+		, rowHeight(0)
+	{}
+	SymbolInfo(int width, int height)
+		: width(width)
+		, height(height)
+		, nRows(0)
+		, nCols(0)
+		, firstRow(-1)
+		, lastRow(-1)
+		, ecLevel(-1)
+		, colWidth(0)
+		, rowHeight(0)
+	{}
 	operator bool() const noexcept { return nRows >= 3 && nCols >= 1 && ecLevel != -1; }
 };
 
 template<typename POINT>
 CodeWord ReadCodeWord(BitMatrixCursor<POINT>& cur, int expectedCluster = -1)
 {
-	auto readCodeWord = [expectedCluster](auto& cur) -> CodeWord {
+	auto readCodeWord = [expectedCluster](BitMatrixCursor<POINT>& cur) -> CodeWord {
 		auto np     = NormalizedPattern<8, 17>(cur.template readPattern<Pattern417>());
 		int cluster = (np[0] - np[2] + np[4] - np[6] + 9) % 9;
 		int code = expectedCluster == -1 || cluster == expectedCluster ? CodewordDecoder::GetCodeword(ToInt(np)) : -1;
 
-		return {cluster, code};
+		return CodeWord{cluster, code};
 	};
 
 	auto curBackup = cur;
@@ -218,7 +242,7 @@ std::vector<int> ReadCodeWords(BitMatrixCursor<POINT> topCur, SymbolInfo info)
 {
 	printf("rows: %d, cols: %d, rowHeight: %.1f, colWidth: %d, firstRow: %d, lastRow: %d, ecLevel: %d\n", info.nRows,
 		   info.nCols, info.rowHeight, info.colWidth, info.firstRow, info.lastRow, info.ecLevel);
-	auto print = [](CodeWord c [[maybe_unused]]) { printf("%4d.%d ", c.code, c.cluster); };
+	auto print = [](CodeWord c /*[[maybe_unused]]*/) { printf("%4d.%d ", c.code, c.cluster); };
 
 	auto rowSkip = topCur.right();
 	if (info.firstRow > info.lastRow) {
@@ -235,7 +259,7 @@ std::vector<int> ReadCodeWords(BitMatrixCursor<POINT> topCur, SymbolInfo info)
 		// skip start pattern
 		cur.stepToEdge(8 + cur.isWhite(), maxColWidth);
 		// read off left row indicator column
-		auto cw [[maybe_unused]] = ReadCodeWord(cur, cluster);
+		auto cw /*[[maybe_unused]]*/ = ReadCodeWord(cur, cluster);
 		printf("%3dx%3d:%2d: ", int(cur.p.x), int(cur.p.y), Row(cw));
 		print(cw);
 
@@ -310,7 +334,7 @@ Reader::decode(const BinaryBitmap& image) const
 	return FirstOrDefault(DoDecode(image, false, _opts.tryRotate(), _opts.returnErrors()));
 }
 
-Barcodes Reader::decode(const BinaryBitmap& image, [[maybe_unused]] int maxSymbols) const
+Barcodes Reader::decode(const BinaryBitmap& image, /*[[maybe_unused]]*/ int maxSymbols) const
 {
 	return DoDecode(image, true, _opts.tryRotate(), _opts.returnErrors());
 }

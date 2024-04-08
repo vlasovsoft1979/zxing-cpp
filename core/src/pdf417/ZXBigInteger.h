@@ -19,19 +19,19 @@ namespace ZXing {
 class BigInteger
 {
 public:
-	using Block = size_t;
+	typedef size_t Block;
 
 	// The number of bits in a block
 	//static const unsigned int N = 8 * sizeof(Block);
 
 	// Constructs zero.
-	BigInteger() = default;
+	BigInteger() : negative(false) {}
 
 	template <typename T>
-	BigInteger(T x, typename std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>* = nullptr) : mag(1, x) {}
+	BigInteger(T x, typename std::enable_if<std::is_integral<T>::value && std::is_unsigned<T>::value>::type* = nullptr) : negative(false),mag(1, x) {}
 
 	template <typename T>
-	BigInteger(T x, typename std::enable_if_t<std::is_integral_v<T> && std::is_signed_v<T>>* = nullptr) : negative(x < 0), mag(1, std::abs(x)) {}
+	BigInteger(T x, typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type* = nullptr) : negative(x < 0), mag(1, std::abs(x)) {}
 
 	static bool TryParse(const std::string& str, BigInteger& result);
 	static bool TryParse(const std::wstring& str, BigInteger& result);
@@ -73,7 +73,7 @@ public:
 	static void Divide(const BigInteger& a, const BigInteger &b, BigInteger& quotient, BigInteger& remainder);
 
 private:
-	bool negative = false;
+	bool negative;
 	std::vector<Block> mag;
 };
 
