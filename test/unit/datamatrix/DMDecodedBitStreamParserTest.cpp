@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 #include <utility>
 
-namespace ZXing::DataMatrix::DecodedBitStreamParser {
+namespace ZXing { namespace DataMatrix { namespace DecodedBitStreamParser {
 
 DecoderResult Decode(ByteArray&& bytes, const bool isDMRE);
 
@@ -261,4 +261,4 @@ TEST(DMDecodeTest, ReaderInit)
 	EXPECT_TRUE(parse({233, 42, 1, 1, 50}).isValid()); // Null
 	EXPECT_FALSE(parse({233, 42, 1, 1, 234, 50}).readerInit());
 	EXPECT_FALSE(parse({233, 42, 1, 1, 234, 50}).isValid());
-}
+}}}

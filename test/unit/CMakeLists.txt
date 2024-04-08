@@ -1,5 +1,6 @@
-#zxing_add_package(GTest googletest https://github.com/google/googletest.git v1.14.0)
-
+if (0)
+zxing_add_package(GTest googletest https://github.com/google/googletest.git v1.14.0)
+else()
 set(GTEST_LOCATION /home/sergv/Documents/googletest)
 add_library(GTest::gtest STATIC IMPORTED)
 set_property(TARGET GTest::gtest PROPERTY IMPORTED_LOCATION "${GTEST_LOCATION}/lib/libgtest.a")
@@ -14,7 +15,7 @@ set_property(TARGET GTest::gmock PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${GTEST
 add_library(GTest::gmock_main STATIC IMPORTED)
 set_property(TARGET GTest::gmock_main PROPERTY IMPORTED_LOCATION "${GTEST_LOCATION}/lib/libgmock_main.a")
 set_property(TARGET GTest::gmock_main PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${GTEST_LOCATION}/include")
-
+endif()
 #if (GTest_POPULATED)
 #    # don't install gtest stuff on "make install"
 #    set (INSTALL_GTEST OFF CACHE BOOL "" FORCE)
@@ -45,16 +46,16 @@ target_sources (UnitTest PRIVATE
     PatternTest.cpp
     TextDecoderTest.cpp
     ThresholdBinarizerTest.cpp
-#    aztec/AZDecoderTest.cpp
-#    aztec/AZDetectorTest.cpp
-#    datamatrix/DMDecodedBitStreamParserTest.cpp
-#    maxicode/MCDecoderTest.cpp
-#    oned/ODCode128ReaderTest.cpp
-#    oned/ODCode39ExtendedModeTest.cpp
-#    oned/ODCode39ReaderTest.cpp
-#    oned/ODCode93ReaderTest.cpp
-#    oned/ODDataBarExpandedBitDecoderTest.cpp
-#    oned/ODDataBarReaderTest.cpp
+    aztec/AZDecoderTest.cpp
+    aztec/AZDetectorTest.cpp
+    datamatrix/DMDecodedBitStreamParserTest.cpp
+    maxicode/MCDecoderTest.cpp
+    oned/ODCode128ReaderTest.cpp
+    oned/ODCode39ExtendedModeTest.cpp
+    oned/ODCode39ReaderTest.cpp
+    oned/ODCode93ReaderTest.cpp
+    oned/ODDataBarExpandedBitDecoderTest.cpp
+    oned/ODDataBarReaderTest.cpp
 #    pdf417/PDF417DecoderTest.cpp
 #    pdf417/PDF417ErrorCorrectionTest.cpp
 #    pdf417/PDF417ScanningDecoderTest.cpp
@@ -95,8 +96,8 @@ target_sources (UnitTest PRIVATE
     ContentTest.cpp
     ReedSolomonTest.cpp
     TextEncoderTest.cpp
-#    aztec/AZEncodeDecodeTest.cpp
-#    aztec/AZHighLevelEncoderTest.cpp
+    aztec/AZEncodeDecodeTest.cpp
+    aztec/AZHighLevelEncoderTest.cpp
     datamatrix/DMEncodeDecodeTest.cpp
 #    oned/ODCodaBarWriterTest.cpp
 #    oned/ODCode128WriterTest.cpp

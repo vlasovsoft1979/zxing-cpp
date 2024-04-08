@@ -154,6 +154,21 @@ inline std::string& operator += (std::string& str, const std::string_view& sv)
     return str;
 }
 
+template<>
+struct hash<std::string_view> 
+{
+	size_t operator()(std::string_view s) const 
+	{
+		size_t result = 0;
+		for (auto i=0u; i < std::min(sizeof(result), s.size()); ++i)
+		{
+			result <<= 8;
+			result += s.data()[i];
+		}
+		return result;
+	}
+};
+
 }
 
 #endif

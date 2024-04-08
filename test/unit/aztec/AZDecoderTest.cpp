@@ -11,10 +11,10 @@
 #include "aztec/AZDetectorResult.h"
 
 #include "gtest/gtest.h"
-#include "tools/string_view.h"
+#include "tools/string_view.hpp"
 #include <utility>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 DecoderResult Decode(const BitArray& bits);
 
@@ -348,4 +348,4 @@ TEST(AZDecoderTest, StructuredAppend)
 		EXPECT_EQ(data.structuredAppend().count, 4);
 		EXPECT_EQ(data.text(), L" ADA"); // Trailing space and "real" sequencing left in result
 	}
-}
+}}

@@ -9,7 +9,7 @@
 #include "gtest/gtest.h"
 #include <utility>
 
-namespace ZXing::MaxiCode::DecodedBitStreamParser {
+namespace ZXing { namespace MaxiCode { namespace DecodedBitStreamParser {
 
 DecoderResult Decode(ByteArray&& bytes, const int mode);
 
@@ -203,4 +203,4 @@ TEST(MCDecoderTest, Mode2)
 		ByteArray mode2 = { 2, 16, 34, 7, 0, 0, 50, 57, 35, 62 };
 		EXPECT_EQ(parse({49}, 2, &mode2).content().utf8(), "00123456\035999\035999\0351"); // Class capped to 999
 	}
-}
+}}}
