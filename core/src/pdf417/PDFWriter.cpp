@@ -118,6 +118,8 @@ BitMatrix Writer::encode(const std::string& contents, int width, int height) con
 }
 
 Writer::Writer()
+	: _margin(-1)
+	, _ecLevel(-1)
 {
 	_encoder.reset(new Encoder);
 }

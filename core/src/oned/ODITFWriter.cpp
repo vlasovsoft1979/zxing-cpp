@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 static const std::array<int, 4> START_PATTERN = { 1, 1, 1, 1 };
 static const std::array<int, 3> END_PATTERN = { 3, 1, 1 };
@@ -75,4 +75,4 @@ BitMatrix ITFWriter::encode(const std::string& contents, int width, int height) 
 	return encode(FromUtf8(contents), width, height);
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

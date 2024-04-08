@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 /**
 * @return a byte array of horizontal pixels (0 = white, 1 = black)
@@ -59,4 +59,4 @@ WriterHelper::AppendPattern(std::vector<bool>& target, int pos, const int* patte
 	return numAdded;
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

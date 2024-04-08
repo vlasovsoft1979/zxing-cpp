@@ -11,7 +11,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 /**
 * <p>Encapsulates functionality and implementation that is common to one-dimensional barcodes.</p>
@@ -40,4 +40,4 @@ public:
 	}
 };
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

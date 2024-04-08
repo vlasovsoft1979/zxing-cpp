@@ -12,7 +12,7 @@
 
 #include <vector>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 static const int CODE_WIDTH = 3 + // start guard
                               (7 * 4) + // left bars
@@ -48,4 +48,4 @@ BitMatrix EAN8Writer::encode(const std::string& contents, int width, int height)
 	return encode(FromUtf8(contents), width, height);
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD

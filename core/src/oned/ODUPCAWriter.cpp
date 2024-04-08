@@ -12,7 +12,7 @@
 
 #include <stdexcept>
 
-namespace ZXing::OneD {
+namespace ZXing { namespace OneD {
 
 BitMatrix
 UPCAWriter::encode(const std::wstring& contents, int width, int height) const
@@ -30,4 +30,4 @@ BitMatrix UPCAWriter::encode(const std::string& contents, int width, int height)
 	return encode(FromUtf8(contents), width, height);
 }
 
-} // namespace ZXing::OneD
+}} // namespace ZXing::OneD
