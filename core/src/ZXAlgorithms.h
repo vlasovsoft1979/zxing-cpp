@@ -14,7 +14,7 @@
 #include <numeric>
 #include <string>
 #include <utility>
-#include "tools/type_traits.hpp"
+#include <type_traits>
 
 namespace ZXing {
 
@@ -105,7 +105,7 @@ T ToDigit(int i)
 	return static_cast<T>('0' + i);
 }
 
-template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
+template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 std::string ToString(T val, int len)
 {
 	std::string result(len--, '0');

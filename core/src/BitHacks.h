@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <cstring>
 #include <vector>
-#include "tools/type_traits.hpp"
+#include <type_traits>
 
 #if defined(__has_include) 
 #if __has_include(<bit>) && __cplusplus > 201703L // MSVC has the <bit> header but then warns about including it
@@ -38,7 +38,7 @@ namespace ZXing { namespace BitHacks {
 /// <summary>
 /// Compute the number of zero bits on the left.
 /// </summary>
-template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
+template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 inline int NumberOfLeadingZeros(T x)
 {
 #ifdef __cpp_lib_bitops
@@ -84,7 +84,7 @@ inline int NumberOfLeadingZeros(T x)
 /// <summary>
 /// Compute the number of zero bits on the right.
 /// </summary>
-template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
+template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 inline int NumberOfTrailingZeros(T v)
 {
 #ifdef __cpp_lib_bitops

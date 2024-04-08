@@ -14,7 +14,7 @@
 #include <cassert>
 #include <cstdint>
 #include <stdexcept>
-#include "tools/type_traits.hpp"
+#include <type_traits>
 #include <vector>
 
 namespace ZXing {
@@ -101,13 +101,13 @@ public:
 	friend bool operator==(const BitArray& a, const BitArray& b) { return a._bits == b._bits; }
 };
 
-template<typename T, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
+template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 T& AppendBit(T& val, bool bit)
 {
 	return (val <<= 1) |= static_cast<T>(bit);
 }
 
-template <typename ARRAY, typename = typename stdx::enable_if<ARRAY, stdx::is_integral<typename ARRAY::value_type>::value>::value>
+template <typename ARRAY, typename = typename std::enable_if<std::is_integral<typename ARRAY::value_type>::value>::type>
 int ToInt(const ARRAY& a)
 {
 	assert(Reduce(a) <= 32);
@@ -118,7 +118,7 @@ int ToInt(const ARRAY& a)
 	return pattern;
 }
 
-template <typename T = int, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
+template <typename T = int, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 T ToInt(const BitArray& bits, int pos = 0, int count = 8 * sizeof(T))
 {
 	assert(0 <= count && count <= 8 * (int)sizeof(T));
@@ -133,7 +133,7 @@ T ToInt(const BitArray& bits, int pos = 0, int count = 8 * sizeof(T))
 	return res;
 }
 
-template <typename T = int, typename = typename stdx::enable_if<T, stdx::is_integral<T>::value>::value>
+template <typename T = int, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 std::vector<T> ToInts(const BitArray& bits, int wordSize, int totalWords, int offset = 0)
 {
 	assert(totalWords >= bits.size() / wordSize);
