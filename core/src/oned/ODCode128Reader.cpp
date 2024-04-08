@@ -47,16 +47,6 @@ class Raw2TxtDecoder
 	bool fnc4Next;
 	bool shift;
 
-	Raw2TxtDecoder()
-		: codeSet(0)
-		, _symbologyIdentifier{'C', '0', 0} // ISO/IEC 15417:2007 Annex C Table C.1
-		, _readerInit(false)
-		, lastTxtSize(0)
-		, fnc4All(false)
-		, fnc4Next(false)
-		, shift(false)
-	{}
-
 	void fnc1(const bool isCodeSetC)
 	{
 		if (txt.empty()) {
@@ -83,7 +73,14 @@ class Raw2TxtDecoder
 	};
 
 public:
-	Raw2TxtDecoder(int startCode) : codeSet(204 - startCode)
+	Raw2TxtDecoder(int startCode) 
+		: codeSet(204 - startCode)
+		, _symbologyIdentifier{'C', '0', 0} // ISO/IEC 15417:2007 Annex C Table C.1
+		, _readerInit(false)
+		, lastTxtSize(0)
+		, fnc4All(false)
+		, fnc4Next(false)
+		, shift(false)
 	{
 		txt.reserve(20);
 	}
