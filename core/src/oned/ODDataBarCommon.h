@@ -95,8 +95,10 @@ struct Pair
 	Character left, right;
 	int finder, xStart, xStop, y, count;
 	Pair() : finder(0), xStart(-1), xStop(1), y(-1), count(1) {}
-	Pair(int finder, int xStart, int xStop, int y, int count) 
-		: finder(finder)
+	Pair(const Character& left, const Character& right, int finder, int xStart, int xStop, int y = -1, int count = 1)
+		: left(left)
+		, right(right)
+		, finder(finder)
 		, xStart(xStart)
 		, xStop(xStop)
 		, y(y)
