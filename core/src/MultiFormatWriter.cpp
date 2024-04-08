@@ -29,46 +29,26 @@ namespace ZXing {
 BitMatrix
 MultiFormatWriter::encode(const std::wstring& contents, int width, int height) const
 {
-	auto exec0 = [&](auto&& writer) {
-		if (_margin >=0)
-			writer.setMargin(_margin);
-		return writer.encode(contents, width, height);
-	};
-
 	auto AztecEccLevel = [&](Aztec::Writer& writer, int eccLevel) { writer.setEccPercent(eccLevel * 100 / 8); };
 	auto Pdf417EccLevel = [&](Pdf417::Writer& writer, int eccLevel) { writer.setErrorCorrectionLevel(eccLevel); };
 	auto QRCodeEccLevel = [&](QRCode::Writer& writer, int eccLevel) {
 		writer.setErrorCorrectionLevel(static_cast<QRCode::ErrorCorrectionLevel>(--eccLevel / 2));
 	};
 
-	auto exec1 = [&](auto&& writer, auto setEccLevel) {
-		if (_encoding != CharacterSet::Unknown)
-			writer.setEncoding(_encoding);
-		if (_eccLevel >= 0 && _eccLevel <= 8)
-			setEccLevel(writer, _eccLevel);
-		return exec0(std::move(writer));
-	};
-
-	auto exec2 = [&](auto&& writer) {
-		if (_encoding != CharacterSet::Unknown)
-			writer.setEncoding(_encoding);
-		return exec0(std::move(writer));
-	};
-
 	switch (_format) {
-	case BarcodeFormat::Aztec: return exec1(Aztec::Writer(), AztecEccLevel);
-	case BarcodeFormat::DataMatrix: return exec2(DataMatrix::Writer());
-	case BarcodeFormat::PDF417: return exec1(Pdf417::Writer(), Pdf417EccLevel);
-	case BarcodeFormat::QRCode: return exec1(QRCode::Writer(), QRCodeEccLevel);
-	case BarcodeFormat::Codabar: return exec0(OneD::CodabarWriter());
-	case BarcodeFormat::Code39: return exec0(OneD::Code39Writer());
-	case BarcodeFormat::Code93: return exec0(OneD::Code93Writer());
-	case BarcodeFormat::Code128: return exec0(OneD::Code128Writer());
-	case BarcodeFormat::EAN8: return exec0(OneD::EAN8Writer());
-	case BarcodeFormat::EAN13: return exec0(OneD::EAN13Writer());
-	case BarcodeFormat::ITF: return exec0(OneD::ITFWriter());
-	case BarcodeFormat::UPCA: return exec0(OneD::UPCAWriter());
-	case BarcodeFormat::UPCE: return exec0(OneD::UPCEWriter());
+	case BarcodeFormat::Aztec: return exec1(Aztec::Writer(), AztecEccLevel, contents, width, height);
+	case BarcodeFormat::DataMatrix: return exec2(DataMatrix::Writer(), contents, width, height);
+	case BarcodeFormat::PDF417: return exec1(Pdf417::Writer(), Pdf417EccLevel,  contents, width, height);
+	case BarcodeFormat::QRCode: return exec1(QRCode::Writer(), QRCodeEccLevel, contents, width, height);
+	case BarcodeFormat::Codabar: return exec0(OneD::CodabarWriter(), contents, width, height);
+	case BarcodeFormat::Code39: return exec0(OneD::Code39Writer(), contents, width, height);
+	case BarcodeFormat::Code93: return exec0(OneD::Code93Writer(), contents, width, height);
+	case BarcodeFormat::Code128: return exec0(OneD::Code128Writer(), contents, width, height);
+	case BarcodeFormat::EAN8: return exec0(OneD::EAN8Writer(), contents, width, height);
+	case BarcodeFormat::EAN13: return exec0(OneD::EAN13Writer(), contents, width, height);
+	case BarcodeFormat::ITF: return exec0(OneD::ITFWriter(), contents, width, height);
+	case BarcodeFormat::UPCA: return exec0(OneD::UPCAWriter(), contents, width, height);
+	case BarcodeFormat::UPCE: return exec0(OneD::UPCEWriter(), contents, width, height);
 	default: throw std::invalid_argument(std::string("Unsupported format: ") + ToString(_format));
 	}
 }

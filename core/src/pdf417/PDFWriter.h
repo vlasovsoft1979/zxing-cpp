@@ -65,8 +65,8 @@ public:
 	BitMatrix encode(const std::string& contents, int width, int height) const;
 
 private:
-	int _margin = -1;
-	int _ecLevel = -1;
+	int _margin;
+	int _ecLevel;
 	std::unique_ptr<Encoder> _encoder;
 };
 

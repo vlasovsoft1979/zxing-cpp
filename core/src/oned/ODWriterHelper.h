@@ -38,6 +38,10 @@ public:
 	static int AppendPattern(std::vector<bool>& target, int pos, const Container& pattern, bool startColor) {
 		return AppendPattern(target, pos, pattern.data(), pattern.size(), startColor);
 	}
+	template <>
+	static int AppendPattern<int>(std::vector<bool>& target, int pos, int pattern, bool startColor) {
+		return AppendPattern(target, pos, &pattern, 1, startColor);
+	}
 };
 
 }} // namespace ZXing::OneD

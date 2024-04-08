@@ -10,7 +10,7 @@
 
 #include <string>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 enum class ErrorCorrectionLevel;
 class EncodeResult;
@@ -18,4 +18,4 @@ class EncodeResult;
 EncodeResult Encode(const std::wstring& content, ErrorCorrectionLevel ecLevel, CharacterSet encoding, int versionNumber,
 					bool useGs1Format, int maskPattern = -1);
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

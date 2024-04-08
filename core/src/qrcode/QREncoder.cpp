@@ -22,19 +22,19 @@
 #include <limits>
 #include <stdexcept>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 static const CharacterSet DEFAULT_BYTE_MODE_ENCODING = CharacterSet::ISO8859_1;
 
 // The original table is defined in the table 5 of JISX0510:2004 (p.19).
-static const std::array<int, 16 * 6> ALPHANUMERIC_TABLE = {
+static const ::std::array<int, 16 * 6> ALPHANUMERIC_TABLE = {{
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  // 0x00-0x0f
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  // 0x10-0x1f
 	36, -1, -1, -1, 37, 38, -1, -1, -1, -1, 39, 40, -1, 41, 42, 43,  // 0x20-0x2f
 	0,   1,  2,  3,  4,  5,  6,  7,  8,  9, 44, -1, -1, -1, -1, -1,  // 0x30-0x3f
 	-1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,  // 0x40-0x4f
 	25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1,  // 0x50-0x5f
-};
+}};
 
 static bool IsOnlyDoubleByteKanji(const std::wstring& content)
 {
@@ -376,7 +376,7 @@ void GenerateECBytes(const ByteArray& dataBytes, int numEcBytes, ByteArray& ecBy
 	ReedSolomonEncode(GenericGF::QRCodeField256(), message, numEcBytes);
 
 	ecBytes.resize(numEcBytes);
-	std::transform(message.end() - numEcBytes, message.end(), ecBytes.begin(), [](auto c) { return narrow_cast<uint8_t>(c); });
+	std::transform(message.end() - numEcBytes, message.end(), ecBytes.begin(), [](int c) { return narrow_cast<uint8_t>(c); });
 }
 
 
@@ -568,4 +568,4 @@ EncodeResult Encode(const std::wstring& content, ErrorCorrectionLevel ecLevel, C
 	return output;
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

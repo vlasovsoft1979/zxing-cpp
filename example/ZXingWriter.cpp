@@ -13,7 +13,7 @@
 #endif
 #include "Version.h"
 
-#include <algorithm>
+#include "tools/algorithm.hpp"
 #include <cctype>
 #include <cstring>
 #include <fstream>
@@ -62,15 +62,22 @@ static bool ParseSize(std::string str, int* width, int* height)
 struct CLI
 {
 	BarcodeFormat format;
-	int sizeHint = 0;
+	int sizeHint;
 	std::string input;
 	std::string outPath;
 	std::string ecLevel;
-	bool inputIsFile = false;
-	bool withHRT = false;
-	bool withQZ = true;
-	bool verbose = false;
+	bool inputIsFile;
+	bool withHRT;
+	bool withQZ;
+	bool verbose;	
 //	CharacterSet encoding = CharacterSet::Unknown;
+	CLI()
+		: sizeHint(0)
+		, inputIsFile(false)
+		, withHRT(false)
+		, withQZ(true)
+		, verbose(false)
+	{}
 };
 
 static bool ParseOptions(int argc, char* argv[], CLI& cli)

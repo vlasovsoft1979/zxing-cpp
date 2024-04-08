@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <utility>
 
-namespace ZXing::QRCode::MaskUtil {
+namespace ZXing { namespace QRCode { namespace MaskUtil {
 
 // Penalty weights from section 6.8.2.1
 static const int N1 = 3;
@@ -151,4 +151,4 @@ int CalculateMaskPenalty(const TritMatrix& matrix)
 		   + MaskUtil::ApplyMaskPenaltyRule4(matrix);
 }
 
-} // namespace ZXing::QRCode::MaskUtil
+}}} // namespace ZXing::QRCode::MaskUtil

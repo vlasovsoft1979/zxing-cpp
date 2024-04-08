@@ -7,6 +7,7 @@
 
 #include "BarcodeFormat.h"
 #include "CharacterSet.h"
+#include "BitMatrix.h"
 
 #include <string>
 
@@ -51,6 +52,33 @@ public:
 
 	BitMatrix encode(const std::wstring& contents, int width, int height) const;
 	BitMatrix encode(const std::string& contents, int width, int height) const;
+
+private:
+	template<typename T>
+	BitMatrix exec0(T&& writer, const std::wstring& contents, int width, int height) const
+	{
+		if (_margin >=0)
+			writer.setMargin(_margin);
+		return writer.encode(contents, width, height);
+	}
+
+	template<typename T, typename E>
+	BitMatrix exec1(T&& writer, E setEccLevel, const std::wstring& contents, int width, int height) const
+	{
+		if (_encoding != CharacterSet::Unknown)
+			writer.setEncoding(_encoding);
+		if (_eccLevel >= 0 && _eccLevel <= 8)
+			setEccLevel(writer, _eccLevel);
+		return exec0(std::move(writer), contents, width, height);
+	}
+
+	template<typename T>
+	BitMatrix exec2(T&& writer, const std::wstring& contents, int width, int height) const
+	{
+		if (_encoding != CharacterSet::Unknown)
+			writer.setEncoding(_encoding);
+		return exec0(std::move(writer), contents, width, height);
+	};
 
 private:
 	BarcodeFormat _format;

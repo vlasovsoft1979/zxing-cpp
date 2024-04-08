@@ -8,8 +8,8 @@
 
 #include "TritMatrix.h"
 
-namespace ZXing::QRCode::MaskUtil {
+namespace ZXing { namespace QRCode { namespace MaskUtil {
 
 int CalculateMaskPenalty(const TritMatrix& matrix);
 
-} // namespace ZXing::QRCode::MaskUtil
+}}} // namespace ZXing::QRCode::MaskUtil

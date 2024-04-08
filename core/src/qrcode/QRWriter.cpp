@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 static const int QUIET_ZONE_SIZE = 4;
 
@@ -48,4 +48,4 @@ BitMatrix Writer::encode(const std::string& contents, int width, int height) con
 	return encode(FromUtf8(contents), width, height);
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

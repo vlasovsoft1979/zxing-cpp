@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 // From Appendix D in JISX0510:2004 (p. 67)
 static const int VERSION_INFO_POLY = 0x1f25;  // 1 1111 0010 0101
@@ -185,8 +185,8 @@ static void EmbedTypeInfo(ErrorCorrectionLevel ecLevel, int maskPattern, TritMat
 {
 	// Type info cells at the left top corner.
 	constexpr PointI TYPE_INFO_COORDINATES[] = {
-		{8, 0}, {8, 1}, {8, 2}, {8, 3}, {8, 4}, {8, 5}, {8, 7}, {8, 8},
-		{7, 8}, {5, 8}, {4, 8}, {3, 8}, {2, 8}, {1, 8}, {0, 8}
+		PointI{8, 0}, PointI{8, 1}, PointI{8, 2}, PointI{8, 3}, PointI{8, 4}, PointI{8, 5}, PointI{8, 7}, PointI{8, 8},
+		PointI{7, 8}, PointI{5, 8}, PointI{4, 8}, PointI{3, 8}, PointI{2, 8}, PointI{1, 8}, PointI{0, 8}
 	};
 
 	BitArray typeInfoBits = MakeTypeInfoBits(ecLevel, maskPattern);
@@ -315,4 +315,4 @@ void BuildMatrix(const BitArray& dataBits, ErrorCorrectionLevel ecLevel, const V
 	EmbedDataBits(dataBits, maskPattern, matrix);
 }
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode

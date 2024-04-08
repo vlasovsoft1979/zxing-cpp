@@ -22,10 +22,10 @@ namespace Pdf417 {
 class BarcodeRow
 {
 	std::vector<bool> _row;
-	int _currentLocation = 0; // A tacker for position in the bar
+	int _currentLocation; // A tacker for position in the bar
 
 public:
-	explicit BarcodeRow(int width = 0) : _row(width, false) {}
+	explicit BarcodeRow(int width = 0) : _row(width, false), _currentLocation(0) {}
 
 	void init(int width) {
 		_row.resize(width, false);
@@ -68,11 +68,11 @@ public:
 class BarcodeMatrix
 {
 	std::vector<BarcodeRow> _matrix;
-	int _width = 0;
-	int _currentRow = -1;
+	int _width;
+	int _currentRow;
 
 public:
-	BarcodeMatrix() {}
+	BarcodeMatrix() : _width(0), _currentRow(-1) {}
 
 	/**
 	* @param height the height of the matrix (Rows)
@@ -126,7 +126,15 @@ public:
 class Encoder
 {
 public:
-	explicit Encoder(bool compact = false) : _compact(compact)  {}
+	explicit Encoder(bool compact = false) 
+		: _compact(compact) 
+		, _compaction(Compaction::AUTO)
+		, _encoding(CharacterSet::ISO8859_1)
+		, _minCols(2)
+		, _maxCols(30)
+		, _minRows(2)
+		, _maxRows(30)
+	{}
 	
 	BarcodeMatrix generateBarcodeLogic(const std::wstring& msg, int errorCorrectionLevel) const;
 
@@ -170,12 +178,12 @@ public:
 
 private:
 	bool _compact;
-	Compaction _compaction = Compaction::AUTO;
-	CharacterSet _encoding = CharacterSet::ISO8859_1;
-	int _minCols = 2;
-	int _maxCols = 30;
-	int _minRows = 2;
-	int _maxRows = 30;
+	Compaction _compaction;
+	CharacterSet _encoding;
+	int _minCols;
+	int _maxCols;
+	int _minRows;
+	int _maxRows;
 };
 
 } // Pdf417

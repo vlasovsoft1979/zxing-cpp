@@ -11,7 +11,7 @@
 #include "QRCodecMode.h"
 #include "QRVersion.h"
 
-namespace ZXing::QRCode {
+namespace ZXing { namespace QRCode {
 
 /**
 * @author satorux@google.com (Satoru Takabayashi) - creator
@@ -23,11 +23,17 @@ namespace ZXing::QRCode {
 class EncodeResult
 {
 public:
-	ErrorCorrectionLevel ecLevel = ErrorCorrectionLevel::Invalid;
-	CodecMode mode = CodecMode::TERMINATOR;
-	const Version* version = nullptr;
-	int maskPattern = -1;
+	EncodeResult()
+		: ecLevel(ErrorCorrectionLevel::Invalid)
+		, mode(CodecMode::TERMINATOR)
+		, version(nullptr)
+		, maskPattern(-1)
+	{}
+	ErrorCorrectionLevel ecLevel;
+	CodecMode mode;
+	const Version* version;
+	int maskPattern;
 	BitMatrix matrix;
 };
 
-} // namespace ZXing::QRCode
+}} // namespace ZXing::QRCode
