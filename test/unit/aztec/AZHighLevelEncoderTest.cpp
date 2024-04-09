@@ -13,7 +13,7 @@
 #include "gtest/gtest.h"
 #include <algorithm>
 
-namespace ZXing::Aztec {
+namespace ZXing { namespace Aztec {
 
 DecoderResult Decode(const BitArray& bits);
 
@@ -179,4 +179,4 @@ TEST(AZHighLevelEncoderTest, HighLevelEncodePairs)
 	TestHighLevelEncodeString("A\200. \200",
 		// 'A'  B/S    =2    \200      "."     " "     \200
 		"...X. XXXXX ..X.. X....... ..X.XXX. ..X..... X.......");
-}
+}}
