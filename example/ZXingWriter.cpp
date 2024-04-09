@@ -152,7 +152,7 @@ std::vector<T> ReadFile(const std::string& fn)
 	std::basic_ifstream<T> ifs(fn, std::ios::binary);
 	if (!ifs.good())
 		throw std::runtime_error("failed to open/read file " + fn);
-	return ifs ? std::vector(std::istreambuf_iterator<T>(ifs), std::istreambuf_iterator<T>()) : std::vector<T>();
+	return ifs ? std::vector<T>(std::istreambuf_iterator<T>(ifs), std::istreambuf_iterator<T>()) : std::vector<T>();
 };
 
 int main(int argc, char* argv[])
