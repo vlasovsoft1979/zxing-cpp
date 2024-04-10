@@ -56,9 +56,9 @@ target_sources (UnitTest PRIVATE
     oned/ODCode93ReaderTest.cpp
     oned/ODDataBarExpandedBitDecoderTest.cpp
     oned/ODDataBarReaderTest.cpp
-#    pdf417/PDF417DecoderTest.cpp
-#    pdf417/PDF417ErrorCorrectionTest.cpp
-#    pdf417/PDF417ScanningDecoderTest.cpp
+    pdf417/PDF417DecoderTest.cpp
+    pdf417/PDF417ErrorCorrectionTest.cpp
+    pdf417/PDF417ScanningDecoderTest.cpp
     qrcode/MQRDecoderTest.cpp
     qrcode/QRBitMatrixParserTest.cpp
     qrcode/QRDataMaskTest.cpp
@@ -73,20 +73,20 @@ endif()
 
 if (ZXING_WRITERS MATCHES "ON|OLD|BOTH")
 target_sources (UnitTest PRIVATE
-#    aztec/AZEncoderTest.cpp
-#    datamatrix/DMHighLevelEncodeTest.cpp
-#    datamatrix/DMPlacementTest.cpp
-#    datamatrix/DMSymbolInfoTest.cpp
-#    datamatrix/DMWriterTest.cpp
-#    oned/ODCode39WriterTest.cpp
-#    oned/ODCode93WriterTest.cpp
-#    oned/ODEAN13WriterTest.cpp
-#    oned/ODEAN8WriterTest.cpp
-#    oned/ODITFWriterTest.cpp
-#    oned/ODUPCAWriterTest.cpp
-#    oned/ODUPCEWriterTest.cpp
-#    pdf417/PDF417HighLevelEncoderTest.cpp
-#    pdf417/PDF417WriterTest.cpp
+    aztec/AZEncoderTest.cpp
+    datamatrix/DMHighLevelEncodeTest.cpp
+    datamatrix/DMPlacementTest.cpp
+    datamatrix/DMSymbolInfoTest.cpp
+    datamatrix/DMWriterTest.cpp
+    oned/ODCode39WriterTest.cpp
+    oned/ODCode93WriterTest.cpp
+    oned/ODEAN13WriterTest.cpp
+    oned/ODEAN8WriterTest.cpp
+    oned/ODITFWriterTest.cpp
+    oned/ODUPCAWriterTest.cpp
+    oned/ODUPCEWriterTest.cpp
+    pdf417/PDF417HighLevelEncoderTest.cpp
+    pdf417/PDF417WriterTest.cpp
     qrcode/QRWriterTest.cpp
 )
 endif()
@@ -99,8 +99,8 @@ target_sources (UnitTest PRIVATE
     aztec/AZEncodeDecodeTest.cpp
     aztec/AZHighLevelEncoderTest.cpp
     datamatrix/DMEncodeDecodeTest.cpp
-#    oned/ODCodaBarWriterTest.cpp
-#    oned/ODCode128WriterTest.cpp
+    oned/ODCodaBarWriterTest.cpp
+    oned/ODCode128WriterTest.cpp
     qrcode/QREncoderTest.cpp
 )
 endif()

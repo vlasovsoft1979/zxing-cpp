@@ -10,7 +10,7 @@
 
 #include "gtest/gtest.h"
 
-namespace ZXing::Pdf417 {
+namespace ZXing { namespace Pdf417 {
 int DecodeMacroBlock(const std::vector<int>& codewords, int codeIndex, DecoderResultExtra& resultMetadata);
 }
 
@@ -566,4 +566,4 @@ TEST(PDF417DecoderTest, Reserved)
 {
 	EXPECT_FALSE(valid({ 3, 903, 0 })); // Not supported
 	EXPECT_FALSE(valid({ 3, 0, 903 }));
-}
+}}
