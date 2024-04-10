@@ -411,7 +411,9 @@ retry:
 	const int dataBlocksCount = Size(dataBlocks);
 	for (int j = 0; j < dataBlocksCount; j++) {
 		auto& db = dataBlocks[j];
-		if (!CorrectErrors(codewords, db.numDataCodewords)) {
+		auto& codewords = db.codewords;
+		auto& numDataCodewords = db.numDataCodewords;
+		if (!CorrectErrors(codewords, numDataCodewords)) {
 			if(version->versionNumber == 24 && !fix259) {
 				fix259 = true;
 				goto retry;
