@@ -13,6 +13,7 @@ namespace ZXing { namespace DataMatrix {
 class Reader : public ZXing::Reader
 {
 public:
+	explicit Reader(const ReaderOptions& opts, bool supportsInversion = false) : ZXing::Reader(opts, supportsInversion) {}
 	Barcode decode(const BinaryBitmap& image) const;
 #ifdef __cpp_impl_coroutine
 	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const override;
