@@ -35,8 +35,20 @@ class DecoderResult
 
 public:
 	DecoderResult() : _lineCount(0), _versionNumber(0), _isMirrored(false), _readerInit(false) {}
-	DecoderResult(Error error) : _error(std::move(error)) {}
-	DecoderResult(Content&& bytes) : _content(std::move(bytes)) {}
+	DecoderResult(Error error)
+		: _lineCount(0)
+		, _versionNumber(0)
+		, _isMirrored(false)
+		, _readerInit(false)
+		, _error(std::move(error)) 
+	{}
+	DecoderResult(Content&& bytes) 
+		: _content(std::move(bytes)) 
+		, _lineCount(0)
+		, _versionNumber(0)
+		, _isMirrored(false)
+		, _readerInit(false)
+	{}
 
 	DecoderResult(DecoderResult&&) = default;
 	DecoderResult& operator=(DecoderResult&&) = default;

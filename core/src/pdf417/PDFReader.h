@@ -20,6 +20,7 @@ namespace ZXing { namespace Pdf417 {
 class Reader : public ZXing::Reader
 {
 public:
+	explicit Reader(const ReaderOptions& opts, bool supportsInversion = false) : ZXing::Reader(opts, supportsInversion) {}
 	Barcode decode(const BinaryBitmap& image) const;
 	Barcodes decode(const BinaryBitmap& image, int maxSymbols) const;
 };
